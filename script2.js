@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
-            if (isVisible && !input.value.trim()) {
+            if (isVisible && (input.value === undefined || input.value.trim() === '')) {
                 isValid = false;
                 input.classList.add('error');
             } else {
