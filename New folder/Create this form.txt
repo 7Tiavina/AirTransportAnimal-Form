@@ -1,0 +1,148 @@
+Create this form: 
+Question 1 (Required) - What animal type is it? Select between Cat, Dog, Bird, Rabbit, NAC, Others
+When animal type is selected, Question What is its breed pop up. We will link the file with each animal breed.
+
+Question 2 (Required): How old is it?
+Question 3 (Required): What is its weight?
+This will be the first screen. At the button add a "add pet button" that will allow the user to repeat the process 1. Also add a remove pet button that will remove the pet.
+
+Then the person proceed to next screen by pressing next button. Where they are taken to the departure location screen.
+
+Arrival Location Heading at the top
+
+Field 1(Required): Address - Users should type their address
+Field 2(Required): Dropdown menu with all countries. User can manually type in the Country to search.
+
+
+Destination country 
+Field 3(Required): Address - Users should type their address
+
+Field 4(Required): Dropdown menu with all countries. User can manually type in the Country to search.
+
+Field 5(Required): Proposed departure date: Select -  Within 1 month, In 1 to 3 months, Beyond 3 months, Project under consideration
+
+End of Page 2, proceed to next page. 
+
+There is a condition to be included on page 3. If both animal and country are not qualified, a question pops up:
+Do you want the pet to travel: Select: Alone (Air Freight), With you - in cabin, With you - in hold.
+If Alone(Air Freight) is selected, a new field pop up called context with description: "Please indicate the context of this transport so that we can offer you the most suitable support."
+Its dropdown fields are: 1. Transport for breeding - You are organizing the transport of one or more animals as part of a breeding activity(sale, reproduction, competition...)
+
+2. International mobility/expatriation - The transport is part of a professional or family move abroad (transfer, relocation, return,...)
+
+3. Joining the owner at the destination - The owner is already settled there, and the pet is joining them.
+
+4. Others - Opening a new field called "Please mention other means." with a text box
+
+
+Then at the bottom we should see Additional information where the user must type in any additional info. 
+
+As NAC we have:
+aras
+chinchilla
+cochon d'inde
+furet
+gris du gabon
+lapin
+perruche
+rat
+tortue
+
+Qualified countries:
+France
+Maurice
+Australie
+Nouvelle Calédonie,
+Nouvelle Zélande,
+Afrique du Sud,
+Ireland,
+Wallis et Futuna,
+Bahreïn,
+Hong Kong,
+Dubai
+Royaume Unis
+Polynésie Français (pas de solution)
+
+
+Qualified Dogs:
+affenpinscher
+akita américain
+akita inu
+american bully
+american staffordshire terrier (Amstaff)
+beauceron
+berger d'Anatolie (kangal ou karabash)
+berger d'Asie centrale ou du Caucase (ovtcharka) 
+bobtail
+boerboel
+boston terrier
+bouledigue anglais
+bouledogue francais
+bouvier bernois / des Flandres / des Ardennes
+boxer
+broholmer
+bull terrier
+bullmastiff
+ca de Bou (dogue de Majorque)
+cane corso (mastiff italien)
+carlin
+cavalier King Charles spaniel
+chien de montagne des Pyrénées
+chien de montagne portugais
+chien loup tchèque
+chien St Hubert
+chihuahua apple head
+chow-chow
+dogue  de Bordeaux
+dobermann
+dogo argentino (dogue argentin)
+dogo ou presa canario (dogue des Canaries
+dogue allemand
+dogue de bordeaux
+english bulldog
+epagneul japonais
+epagneul King Charles
+epagneul tibétain
+griffon belge/bruxellois
+komondor
+léonberg
+lhassa apso
+mastiff du Tibet
+mâtin des Pyrénées
+mâtin espagnol
+mâtin napolitain
+old english mastiff (mastiff)
+pékinois
+petit brabançon
+rottweiller
+saint bernard
+shar pei
+shih tzu
+stafforshire bull terrier (staffie)
+terre-neuve
+tosa ( mastiff japonais)
+fila brasileiro
+
+Qualified Cats:
+bengal
+British long hair
+british short hair
+burmese
+exotic fold
+exotic shorthair
+himalayen
+persan
+savannah
+scottish fold
+selkirk rex
+
+
+
+
+All animals are included in a separate file. Respect the condition to make the question pop up on third screen. The question must only show if both country and animal are not qualified together.
+
+
+
+
+
+

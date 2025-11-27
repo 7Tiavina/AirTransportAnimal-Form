@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+:root {
+    --primary-color: #4a90e2;
+    --primary-hover: #357abd;
+    --success-color: #00b894;
+    --danger-color: #ff7675;
+    --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    --text-color: #2d3436;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.form-container {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 650px;
+}
+
+h2 {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+h3 {
+    color: var(--primary-color);
+    margin-top: 1.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Page transitions */
+.page { display: none; }
+#page-1 { display: block; } /* Ensure Page 1 is visible by default */
+
+/* Input Styles */
+input[type="text"], select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+input.error, select.error, textarea.error {
+    border-color: var(--danger-color);
+    background-color: #fff0f0;
+}
+
+/* Buttons */
+button, input[type="submit"] {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+}
+
+button:hover { transform: translateY(-2px); }
+
+/* Navigation & Submit Buttons */
+button[id^="next"], button[type="submit"] {
+    background-color: var(--primary-color);
+    color: white;
+    float: right;
+}
+
+button[id^="prev"] {
+    background-color: #dfe6e9;
+    color: var(--text-color);
+    float: left;
+}
+
+/* Add/Remove Pet Buttons */
+#add-pet-btn {
+    background-color: var(--success-color);
+    color: white;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.remove-pet-btn {
+    background-color: white;
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+    font-size: 0.9rem;
+    padding: 8px 16px;
+}
+
+.remove-pet-btn:hover {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.pet-form {
+    border: 1px solid #eee;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+}
+
+.pet-form h4 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+/* Clearfix for floating buttons */
+.page::after {
+    content: "";
+    display: table;
+    clear: both;
+}
