@@ -5,32 +5,26 @@ function getCountry(place) {
     return countryComponent ? countryComponent.longText : null;
 }
 
-// This function will be called by the Google Maps API callback when it's ready
-async function initAutocomplete() {
-    // Ensure the custom element is defined before trying to create it
-    await customElements.whenDefined('gmp-place-autocomplete');
-
-    const departureAddressInput = document.getElementById('departure-address');
-    const destinationAddressInput = document.getElementById('destination-address');
+// This function is called by the Google Maps API callback when it's ready
+function initAutocomplete() {
+    const departureAutocomplete = document.getElementById('departure-address');
+    const destinationAutocomplete = document.getElementById('destination-address');
     
     const departureCountrySelect = document.getElementById('departure-country');
     const destinationCountrySelect = document.getElementById('destination-country');
 
-    if (!departureAddressInput || !destinationAddressInput || !departureCountrySelect || !destinationCountrySelect) {
-        console.error("Could not find all required input/select elements for autocomplete.");
+    if (!departureAutocomplete || !destinationAutocomplete || !departureCountrySelect || !destinationCountrySelect) {
+        console.error("Could not find all required autocomplete/select elements.");
         return;
     }
 
-    // --- Departure Autocomplete ---
-    const departureAutocomplete = new google.maps.places.PlaceAutocompleteElement();
-    departureAutocomplete.inputElement = departureAddressInput;
+    // --- Add event listeners directly to the elements from the HTML ---
     departureAutocomplete.addEventListener('gmp-placeselect', (event) => {
         const place = event.place;
         console.log('Departure Place selected:', place);
         
         const countryName = getCountry(place);
         if (countryName) {
-            // Find the option with the matching English name (value) and select it
             for (let i = 0; i < departureCountrySelect.options.length; i++) {
                 if (departureCountrySelect.options[i].value === countryName) {
                     departureCountrySelect.selectedIndex = i;
@@ -40,16 +34,12 @@ async function initAutocomplete() {
         }
     });
 
-    // --- Destination Autocomplete ---
-    const destinationAutocomplete = new google.maps.places.PlaceAutocompleteElement();
-    destinationAutocomplete.inputElement = destinationAddressInput;
     destinationAutocomplete.addEventListener('gmp-placeselect', (event) => {
         const place = event.place;
         console.log('Destination Place selected:', place);
         
         const countryName = getCountry(place);
         if (countryName) {
-             // Find the option with the matching English name (value) and select it
             for (let i = 0; i < destinationCountrySelect.options.length; i++) {
                 if (destinationCountrySelect.options[i].value === countryName) {
                     destinationCountrySelect.selectedIndex = i;
@@ -59,7 +49,6 @@ async function initAutocomplete() {
         }
     });
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Translations Object ---
