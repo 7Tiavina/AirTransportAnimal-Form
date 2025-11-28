@@ -5,15 +5,57 @@ function getCountry(place) {
     return countryComponent ? countryComponent.longText : null;
 }
 
+function findAndSelectCountry(choiceInstance, countryNameToFind) {
+    if (!countryNameToFind || !choiceInstance) return;
+
+    const normalizedCountry = countryNameToFind.toLowerCase().trim();
+    let bestMatch = null;
+
+    // Specific mapping for common discrepancies
+    const countryMappings = {
+        "united states": "United States of America",
+        // Add more mappings here if needed, e.g., "uk": "United Kingdom"
+    };
+
+    const mappedCountry = countryMappings[normalizedCountry];
+    if (mappedCountry) {
+        choiceInstance.setValue(mappedCountry);
+        return;
+    }
+    
+    // The getChoices method is not standard, we need to get the choices from the original select element
+    const selectElement = choiceInstance.passedElement.element;
+    for (const option of selectElement.options) {
+        const optionValue = option.value.toLowerCase().trim();
+        const optionText = option.textContent.toLowerCase().trim();
+
+        // 1. Exact match on value or text
+        if (optionValue === normalizedCountry || optionText === normalizedCountry) {
+            bestMatch = option.value;
+            break; 
+        }
+        
+        // 2. Substring match (if no exact match found yet)
+        if (!bestMatch && (optionValue.includes(normalizedCountry) || normalizedCountry.includes(optionValue))) {
+            bestMatch = option.value;
+        }
+    }
+
+    if (bestMatch) {
+        choiceInstance.setValue(bestMatch);
+    } else {
+        console.warn(`Could not find a matching country for: "${countryNameToFind}"`);
+    }
+}
+
+
 // This function is called by the Google Maps API callback when it's ready
 function initAutocomplete() {
     const departureAutocomplete = document.getElementById('departure-address');
     const destinationAutocomplete = document.getElementById('destination-address');
     
-    const departureCountrySelect = document.getElementById('departure-country');
-    const destinationCountrySelect = document.getElementById('destination-country');
-
-    if (!departureAutocomplete || !destinationAutocomplete || !departureCountrySelect || !destinationCountrySelect) {
+    // Choices.js instances are available in the global scope of the DOMContentLoaded listener
+    if (!departureAutocomplete || !destinationAutocomplete || !window.departureChoice || !window.destinationChoice) {
         console.error("Could not find all required autocomplete/select elements.");
         return;
     }
@@ -22,41 +64,37 @@ function initAutocomplete() {
     departureAutocomplete.addEventListener('gmp-placeselect', (event) => {
         const place = event.place;
         console.log('Departure Place selected:', place);
-        
         const countryName = getCountry(place);
-        if (countryName) {
-            for (let i = 0; i < departureCountrySelect.options.length; i++) {
-                if (departureCountrySelect.options[i].value === countryName) {
-                    departureCountrySelect.selectedIndex = i;
-                    break;
-                }
-            }
-        }
+        findAndSelectCountry(window.departureChoice, countryName);
     });
 
     destinationAutocomplete.addEventListener('gmp-placeselect', (event) => {
         const place = event.place;
         console.log('Destination Place selected:', place);
-        
         const countryName = getCountry(place);
-        if (countryName) {
-            for (let i = 0; i < destinationCountrySelect.options.length; i++) {
-                if (destinationCountrySelect.options[i].value === countryName) {
-                    destinationCountrySelect.selectedIndex = i;
-                    break;
-                }
-            }
-        }
+        findAndSelectCountry(window.destinationChoice, countryName);
     });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    
+    const departureCountrySelect = document.getElementById('departure-country');
+    const destinationCountrySelect = document.getElementById('destination-country');
+
+    const choiceOptions = {
+        searchEnabled: true,
+        itemSelectText: '',
+    };
+
+    window.departureChoice = new Choices(departureCountrySelect, choiceOptions);
+    window.destinationChoice = new Choices(destinationCountrySelect, choiceOptions);
+
     // --- Translations Object ---
     const translations = {
         'fr': {
             title: "Formulaire de Transport d'Animaux",
             page1_title: "Informations sur l'Animal",
-            page2_title: "Départ et Destination",
+            page2_title: "Dites-nous quel est votre projet.",
             page3_title: "Conditions de Voyage",
             departure_title: "Départ",
             destination_title: "Destination",
@@ -103,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'en': {
             title: "Pet Transport Form",
             page1_title: "Pet Information",
-            page2_title: "Departure and Destination",
+            page2_title: "Tell us what your project is.",
             page3_title: "Travel Conditions",
             departure_title: "Departure",
             destination_title: "Destination",
@@ -414,6 +452,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 breedContainer.style.display = 'block';
                 breedSelect.required = true;
             }
+        });
+
+        const numericInputs = petForm.querySelectorAll('input[name^="age"], input[name^="weight"]');
+        numericInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.name.startsWith('age')) {
+                    input.value = input.value.replace(/[^0-9]/g, ''); // Allow only integers
+                } else if (input.name.startsWith('weight')) {
+                    // Allow digits and a single decimal point
+                    let value = input.value;
+                    value = value.replace(/[^0-9.]/g, ''); // Remove non-numeric and non-dot characters
+                    const parts = value.split('.');
+                    if (parts.length > 2) {
+                        // If there's more than one decimal point, keep only the first one
+                        value = parts[0] + '.' + parts.slice(1).join(''); 
+                    }
+                    input.value = value;
+                }
+            });
         });
         
         // Remove button listener

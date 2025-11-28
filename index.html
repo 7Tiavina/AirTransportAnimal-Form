@@ -7,6 +7,7 @@
     <!-- IMPORTANT: Remplacez VOTRE_CLE_API par votre propre clé API Google Maps -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOaIw0ZuWRnUn-EXQSip4uJ5RMQjewBxw&libraries=places&v=beta&callback=initAutocomplete" async defer></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/styles/choices.min.css" />
 </head>
 <body>
     <div class="form-container">
@@ -24,7 +25,7 @@
             </div>
 
             <div id="page-2" class="page" style="display: none;">
-                <h2 data-key="page2_title">Départ et Destination</h2>
+                <h2 data-key="page2_title">Tell us what your project is.</h2>
                 
                 <h3 data-key="departure_title">Départ</h3>
                 <label for="departure-address" data-key="departure_address_label">Adresse:</label>
@@ -471,6 +472,7 @@
             </div>
         </form>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"></script>
     <script src="script2.js"></script>
 </body>
 </html>
