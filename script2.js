@@ -81,6 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const departureCountrySelect = document.getElementById('departure-country');
     const destinationCountrySelect = document.getElementById('destination-country');
 
+    let telInputPhone;    // Global variable for phone number intlTelInput instance
+    let telInputWhatsapp; // Global variable for WhatsApp intlTelInput instance
+
     const choiceOptions = {
         searchEnabled: true,
         itemSelectText: '',
@@ -89,6 +92,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.departureChoice = new Choices(departureCountrySelect, choiceOptions);
     window.destinationChoice = new Choices(destinationCountrySelect, choiceOptions);
+
+    // Initialize intl-tel-input
+    const phoneNumberInput = document.getElementById('phone'); // Changed ID to 'phone'
+    const whatsappNumberInput = document.getElementById('whatsapp'); // Changed ID to 'whatsapp'
+
+    if (phoneNumberInput) {
+        telInputPhone = window.intlTelInput(phoneNumberInput, {
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js", // Updated utilsScript version
+            // initialCountry: "auto", // Removed initialCountry
+            // dropdownContainer: document.getElementById('phone-number-wrapper'), // Removed dropdownContainer
+            // geoIpLookup: callback => { // Removed geoIpLookup
+            //     fetch("https://ipapi.co/json")
+            //         .then(res => res.json())
+            //         .then(data => callback(data.country_code))
+            //         .catch(() => callback("us"));
+            // },
+        });
+    }
+
+    if (whatsappNumberInput) {
+        telInputWhatsapp = window.intlTelInput(whatsappNumberInput, {
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js", // Updated utilsScript version
+            // initialCountry: "auto", // Removed initialCountry
+            // dropdownContainer: document.getElementById('whatsapp-number-wrapper'), // Removed dropdownContainer
+            // geoIpLookup: callback => { // Removed geoIpLookup
+            //     fetch("https://ipapi.co/json")
+            //         .then(res => res.json())
+            //         .then(data => callback(data.country_code))
+            //         .catch(() => callback("us"));
+            // },
+        });
+    }
 
     // --- Translations Object ---
     const translations = {
@@ -721,8 +756,8 @@ document.addEventListener('DOMContentLoaded', () => {
         data['first-name'] = formData.get('first-name');
         data['last-name'] = formData.get('last-name');
         data['email'] = formData.get('email');
-        data['phone-number'] = formData.get('phone-number');
-        data['whatsapp-number'] = formData.get('whatsapp-number');
+        data['phone-number'] = telInputPhone ? telInputPhone.getNumber() : '';
+        data['whatsapp-number'] = telInputWhatsapp ? telInputWhatsapp.getNumber() : '';
 
         console.log('Sending:', data);
 
