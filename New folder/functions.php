@@ -86,6 +86,17 @@ function pet_transport_handle_form_submission( WP_REST_Request $request ) {
     // --- 1. Generate Rich HTML Content for Post and Email ---
     $post_content = '';
 
+    // Contact Information
+    $post_content .= "<h2>Contact Information</h2>";
+    $post_content .= "<strong>First Name:</strong> " . sanitize_text_field($params['first-name']) . "<br>";
+    $post_content .= "<strong>Last Name:</strong> " . sanitize_text_field($params['last-name']) . "<br>";
+    $post_content .= "<strong>Email:</strong> " . sanitize_email($params['email']) . "<br>";
+    $post_content .= "<strong>Phone:</strong> " . sanitize_text_field($params['phone']) . "<br>";
+    if ( ! empty( $params['whatsapp'] ) ) {
+        $post_content .= "<strong>WhatsApp:</strong> " . sanitize_text_field($params['whatsapp']) . "<br>";
+    }
+    $post_content .= "<hr>";
+
     // Departure & Destination
     $post_content .= "<h2>Departure &amp; Destination</h2>";
     $post_content .= "<strong>Departure Address:</strong> " . sanitize_text_field($params['departure-address']) . "<br>";
@@ -125,7 +136,7 @@ function pet_transport_handle_form_submission( WP_REST_Request $request ) {
     $post_content .= wpautop(sanitize_textarea_field($params['additional-info']));
 
     // --- 2. Create the Post ---
-    $post_title = 'Pet Transport Request - ' . date('Y-m-d H:i:s');
+    $post_title = 'Pet Transport Request - ' . sanitize_text_field($params['first-name']) . ' ' . sanitize_text_field($params['last-name']);
     $post_data = array(
         'post_title'    => $post_title,
         'post_content'  => $post_content,
@@ -159,6 +170,7 @@ function pet_transport_handle_form_submission( WP_REST_Request $request ) {
     update_post_meta( $post_id, 'pets_data', $sanitized_pets );
 
     $meta_fields = [
+        'first-name', 'last-name', 'email', 'phone', 'whatsapp',
         'departure_address', 'departure_country', 'destination_address', 'destination_country',
         'departure_date', 'travel_option', 'context', 'other_means', 'additional_info'
     ];

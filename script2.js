@@ -14,7 +14,9 @@ function findAndSelectCountry(choiceInstance, countryNameToFind) {
     // Specific mapping for common discrepancies
     const countryMappings = {
         "united states": "United States of America",
-        // Add more mappings here if needed, e.g., "uk": "United Kingdom"
+        "usa": "United States of America",
+        "uk": "United Kingdom",
+        "great britain": "United Kingdom"
     };
 
     const mappedCountry = countryMappings[normalizedCountry];
@@ -48,29 +50,25 @@ function findAndSelectCountry(choiceInstance, countryNameToFind) {
     }
 }
 
-
 // This function is called by the Google Maps API callback when it's ready
 function initAutocomplete() {
     const departureAutocomplete = document.getElementById('departure-address');
     const destinationAutocomplete = document.getElementById('destination-address');
     
-    // Choices.js instances are available in the global scope of the DOMContentLoaded listener
+    // Check if elements exist and Choices instances are ready
     if (!departureAutocomplete || !destinationAutocomplete || !window.departureChoice || !window.destinationChoice) {
-        console.error("Could not find all required autocomplete/select elements.");
         return;
     }
 
     // --- Add event listeners directly to the elements from the HTML ---
     departureAutocomplete.addEventListener('gmp-placeselect', (event) => {
         const place = event.place;
-        console.log('Departure Place selected:', place);
         const countryName = getCountry(place);
         findAndSelectCountry(window.departureChoice, countryName);
     });
 
     destinationAutocomplete.addEventListener('gmp-placeselect', (event) => {
         const place = event.place;
-        console.log('Destination Place selected:', place);
         const countryName = getCountry(place);
         findAndSelectCountry(window.destinationChoice, countryName);
     });
@@ -78,52 +76,31 @@ function initAutocomplete() {
 
 document.addEventListener('DOMContentLoaded', () => {
     
+    // --- Choices.js Initialization ---
     const departureCountrySelect = document.getElementById('departure-country');
     const destinationCountrySelect = document.getElementById('destination-country');
-
-    let telInputPhone;    // Global variable for phone number intlTelInput instance
-    let telInputWhatsapp; // Global variable for WhatsApp intlTelInput instance
 
     const choiceOptions = {
         searchEnabled: true,
         itemSelectText: '',
-        allowHTML: true, // Suppress Choices.js deprecation warning
     };
 
     window.departureChoice = new Choices(departureCountrySelect, choiceOptions);
     window.destinationChoice = new Choices(destinationCountrySelect, choiceOptions);
 
-    // Initialize intl-tel-input
-    const phoneNumberInput = document.getElementById('phone'); // Changed ID to 'phone'
-    const whatsappNumberInput = document.getElementById('whatsapp'); // Changed ID to 'whatsapp'
+    // --- Intl Tel Input Initialization (Phone & WhatsApp) ---
+    const phoneInput = document.getElementById('phone');
+    const whatsappInput = document.getElementById('whatsapp');
 
-    if (phoneNumberInput) {
-        telInputPhone = window.intlTelInput(phoneNumberInput, {
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js", // Updated utilsScript version
-            // initialCountry: "auto", // Removed initialCountry
-            // dropdownContainer: document.getElementById('phone-number-wrapper'), // Removed dropdownContainer
-            // geoIpLookup: callback => { // Removed geoIpLookup
-            //     fetch("https://ipapi.co/json")
-            //         .then(res => res.json())
-            //         .then(data => callback(data.country_code))
-            //         .catch(() => callback("us"));
-            // },
-        });
-    }
+    const itiOptions = {
+        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
+        preferredCountries: ['fr', 'us', 'gb', 'ca', 'au'], 
+        separateDialCode: true
+    };
 
-    if (whatsappNumberInput) {
-        telInputWhatsapp = window.intlTelInput(whatsappNumberInput, {
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js", // Updated utilsScript version
-            // initialCountry: "auto", // Removed initialCountry
-            // dropdownContainer: document.getElementById('whatsapp-number-wrapper'), // Removed dropdownContainer
-            // geoIpLookup: callback => { // Removed geoIpLookup
-            //     fetch("https://ipapi.co/json")
-            //         .then(res => res.json())
-            //         .then(data => callback(data.country_code))
-            //         .catch(() => callback("us"));
-            // },
-        });
-    }
+    // Initialize instances
+    const phoneIti = window.intlTelInput(phoneInput, itiOptions);
+    const whatsappIti = window.intlTelInput(whatsappInput, itiOptions);
 
     // --- Translations Object ---
     const translations = {
@@ -156,11 +133,14 @@ document.addEventListener('DOMContentLoaded', () => {
             context_others: "Autres",
             other_means_label: "Veuillez mentionner d'autres moyens:",
             additional_info_label: "Informations Supplémentaires:",
+            
+            // Page 4 Translations
             first_name_label: "Prénom:",
             last_name_label: "Nom:",
             email_label: "Adresse Email:",
-            phone_number_label: "Numéro de téléphone:",
-            whatsapp_number_label: "WhatsApp (facultatif):",
+            phone_label: "Numéro de Téléphone:",
+            whatsapp_label: "Numéro WhatsApp (Optionnel):",
+            consent_label: "J'ai lu et j'accepte les Conditions Générales et les Politiques de Confidentialité.",
             add_pet_btn: "Ajouter un Animal",
             next_btn: "Suivant",
             prev_btn: "Précédent",
@@ -170,11 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
             animal_type_label: "Type d'Animal:",
             breed_label: "Race:",
             other_animal_label: "Spécifiez Type d'Animal & Race:",
+            specify_breed_label: "Veuillez spécifier la race:", 
             age_label: "Âge:",
             weight_label: "Poids:",
             choose_animal_type: "--Veuillez choisir une option--",
             select_breed: "--Sélectionner Race--",
-            error_alert: "Veuillez remplir tous les champs obligatoires.",
+            error_alert: "Veuillez remplir tous les champs obligatoires (Lettres uniquement pour les noms).",
             submit_success: "Demande soumise avec succès!",
             submit_failure: "La soumission a échoué: ",
             sending: "Envoi en cours...",
@@ -209,11 +190,14 @@ document.addEventListener('DOMContentLoaded', () => {
             context_others: "Others",
             other_means_label: "Please mention other means:",
             additional_info_label: "Additional Information:",
+            
+            // Page 4 Translations
             first_name_label: "First Name:",
             last_name_label: "Last Name:",
             email_label: "Email Address:",
-            phone_number_label: "Phone Number:",
-            whatsapp_number_label: "WhatsApp (optional):",
+            phone_label: "Phone Number:",
+            whatsapp_label: "WhatsApp Number (Optional):",
+            consent_label: "I have read and accept the Terms and Conditions and Privacy Policies.",
             add_pet_btn: "Add Pet",
             next_btn: "Next",
             prev_btn: "Previous",
@@ -223,11 +207,12 @@ document.addEventListener('DOMContentLoaded', () => {
             animal_type_label: "Animal Type:",
             breed_label: "Breed:",
             other_animal_label: "Specify Animal Type & Breed:",
+            specify_breed_label: "Please specify the breed:", 
             age_label: "Age:",
             weight_label: "Weight:",
             choose_animal_type: "--Please choose an option--",
             select_breed: "--Select Breed--",
-            error_alert: "Please fill in all required fields.",
+            error_alert: "Please fill in all required fields (Letters only for names).",
             submit_success: "Request submitted successfully!",
             submit_failure: "Submission failed: ",
             sending: "Sending...",
@@ -249,8 +234,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Full Breed Map (English Value -> French Display Text)
     const breedsMap_fr = {
-        "Abyssinian": "Abyssin", "American Bobtail": "Bobtail Américain", "American Curl": "American Curl", "American Shorthair": "American Shorthair", "American Wirehair": "American Wirehair", "Asian": "Asiatique", "Australian Mist": "Australian Mist", "Balinese": "Balinais", "Bengal": "Bengal", "Birman (Sacred Birman)": "Sacré de Birmanie", "Bohemian Rex": "Rex de Bohême", "Bombay": "Bombay", "British Longhair": "Britannique à Poil Long", "British Shorthair": "Britannique à Poil Court", "Burmese": "Burmese", "Burmilla": "Burmilla", "Californian Rex": "Rex Californien", "Chartreux": "Chartreux", "Cornish Rex": "Cornish Rex", "Cymric": "Cymric", "Devon Rex": "Devon Rex", "Domestic Cat": "Chat Domestique", "Donskoy (Don Sphynx)": "Donskoy (Sphynx du Don)", "Egyptian Mau": "Mau Égyptien", "European": "Européen", "Exotic Fold": "Exotic Fold", "Exotic Shorthair": "Exotic Shorthair", "German Rex": "Rex Allemand", "Highland Fold": "Highland Fold", "Himalayan": "Himalayen", "Japanese Bobtail": "Bobtail Japonais", "Korat": "Korat", "Kurilian Bobtail": "Bobtail des Kouriles", "LaPerm": "LaPerm", "Lykoi": "Lykoï", "Maine Coon": "Maine Coon", "Manx": "Manx", "Mekong Bobtail": "Bobtail du Mékong", "Munchkin": "Munchkin", "Nebelung": "Nebelung", "Neva Masquerade": "Neva Mascarade", "Norwegian Forest Cat": "Norvégien", "Ocicat": "Ocicat", "Oriental": "Oriental", "Persian": "Persan", "Peterbald": "Peterbald", "Ragamuffin": "Ragamuffin", "Ragdoll": "Ragdoll", "Russian Blue": "Bleu Russe", "Savannah": "Savannah", "Scottish Fold": "Scottish Fold", "Selkirk Rex": "Selkirk Rex", "Siamese": "Siamois", "Siberian": "Sibérien", "Singapura": "Singapura", "Snowshoe": "Snowshoe", "Sokoke": "Sokoke", "Somali": "Somali", "Sphynx": "Sphynx", "Thai": "Thaï", "Tiffanie": "Tiffanie", "Tonkinese": "Tonkinois", "Toyger": "Toyger", "Turkish Angora": "Angora Turc", "Turkish Van": "Turc de Van",
-        "Affenpinscher": "Affenpinscher", "Airedale Terrier": "Airedale Terrier", "Akita Inu": "Akita Inu", "Alaskan Klee Kai": "Alaskan Klee Kai", "Alaskan Malamute": "Malamute de l'Alaska", "American Akita": "Akita Américain", "American Bully": "American Bully", "American Pit Bull Terrier": "American Pit Bull Terrier", "American Staffordshire Terrier": "American Staffordshire Terrier", "Anatolian Shepherd": "Berger d'Anatolie", "Appenzeller Sennenhund": "Bouvier d'Appenzell", "Atlas Shepherd (Aidi)": "Aïdi (Berger de l'Atlas)", "Australian Cattle Dog": "Australian Cattle Dog", "Australian Shepherd": "Berger Australien", "Australian Terrier": "Australian Terrier", "Basenji": "Basenji", "Basset Hound": "Basset Hound", "Bearded Collie": "Colley Barbu", "Beauceron": "Beauceron", "Belgian Malinois": "Malinois", "Belgian Shepherd": "Berger Belge", "Bernese Mountain Dog": "Bouvier Bernois", "Bichon Frise": "Bichon Frisé", "Bloodhound": "Chien de Saint-Hubert", "Boerboel": "Boerboel", "Border Collie": "Border Collie", "Border Terrier": "Border Terrier", "Borzoi": "Barzoï", "Boston Terrier": "Boston Terrier", "Bouvier des Ardennes": "Bouvier des Ardennes", "Bouvier des Flandres": "Bouvier des Flandres", "Boxer": "Boxer", "Briard": "Berger de Brie", "Brittany Spaniel": "Épagneul Breton", "Broholmer": "Broholmer", "Brussels Griffon": "Griffon Bruxellois", "Bull Terrier": "Bull Terrier", "Bullmastiff": "Bullmastiff", "Ca de Bou (Majorcan Mastiff)": "Ca de Bou (Dogue de Majorque)", "Cairn Terrier": "Cairn Terrier", "Cane Corso": "Cane Corso", "Catalan Sheepdog": "Berger Catalan", "Caucasian Shepherd Dog": "Berger du Caucase", "Cavalier King Charles Spaniel": "Cavalier King Charles Spaniel", "Chihuahua": "Chihuahua", "Chow Chow": "Chow Chow", "Cocker Spaniel": "Cocker Spaniel", "Collie": "Colley", "Coton de Tulear": "Coton de Tuléar", "Czechoslovakian Wolfdog": "Chien-loup Tchécoslovaque", "Dachshund": "Teckel", "Dalmatian": "Dalmatien", "Doberman": "Doberman", "Dogo Argentino": "Dogue Argentin", "Dogue de Bordeaux": "Dogue de Bordeaux", "Dutch Smoushond (Kooikerhondje)": "Smoushond Hollandais (Kooikerhondje)", "English Bulldog": "Bulldog Anglais", "English Pointer": "Pointer Anglais", "Fila Brasileiro": "Fila Brasileiro", "Finnish Spitz": "Spitz Finlandais", "Fox Terrier": "Fox Terrier", "French Bulldog": "Bouledogue Français", "German Shepherd": "Berger Allemand", "German Spitz": "Spitz Allemand", "Golden Retriever": "Golden Retriever", "Great Dane": "Dogue Allemand", "Greater Swiss Mountain Dog": "Grand Bouvier Suisse", "Greyhound": "Lévrier", "Icelandic Sheepdog": "Berger d'Islande", "Italian Greyhound": "Petit Lévrier Italien", "Italian Spitz": "Spitz Italien", "Jack Russell Terrier": "Jack Russell Terrier", "Japanese Spaniel (Japanese Chin)": "Épagneul Japonais (Chin)", "Japanese Spitz": "Spitz Japonais", "Japanese Terrier": "Terrier Japonais", "King Charles Spaniel": "King Charles Spaniel", "Komondor": "Komondor", "Labrador Retriever": "Labrador Retriever", "Leonberger": "Leonberger", "Lhasa Apso": "Lhassa Apso", "Maltese": "Maltais", "Mastiff": "Mastiff", "Neapolitan Mastiff": "Mâtin de Naples", "Newfoundland": "Terre-Neuve", "Norfolk Terrier": "Terrier de Norfolk", "Old English Sheepdog (Bobtail)": "Bobtail", "Pekingese": "Pékinois", "Picardy Shepherd": "Berger Picard", "Pinscher": "Pinscher", "Pointer": "Pointer", "Polish Lowland Sheepdog": "Berger Polonais de Plaine", "Pomeranian": "Spitz Nain (Loulou de Poméranie)", "Poodle": "Caniche", "Portuguese Water Dog": "Chien d'Eau Portugais", "Pug": "Carlin", "Puli/Pumi/Mudi": "Puli/Pumi/Mudi", "Pyrenean Mastiff": "Mâtin des Pyrénées", "Pyrenean Mountain Dog": "Montagne des Pyrénées", "Pyrenean Shepherd": "Berger des Pyrénées", "Rhodesian Ridgeback": "Rhodesian Ridgeback", "Rottweiler": "Rottweiler", "Saint Bernard": "Saint-Bernard", "Saluki": "Saluki", "Samoyed": "Samoyède", "Schnauzer": "Schnauzer", "Scottish Terrier": "Terrier Écossais", "Setter": "Setter", "Shar Pei": "Shar Pei", "Shetland Sheepdog": "Berger des Shetland", "Shiba Inu": "Shiba Inu", "Shih Tzu": "Shih Tzu", "Siberian Husky": "Husky Sibérien", "Skye Terrier": "Skye Terrier", "Staffordshire Bull Terrier": "Staffordshire Bull Terrier", "Standard Poodle": "Caniche Standard", "Swiss White Shepherd": "Berger Blanc Suisse", "Tervuren Shepherd": "Tervuren", "Tibetan Mastiff": "Dogue du Tibet", "Tibetan Spaniel": "Épagneul du Tibet", "Tibetan Terrier": "Terrier du Tibet", "Tosa": "Tosa", "Weimaraner": "Braque de Weimar", "Welsh Corgi": "Corgi", "Welsh Terrier": "Terrier Gallois", "West Highland White Terrier": "West Highland White Terrier (Westie)", "Whippet": "Whippet", "Yorkshire Terrier": "Yorkshire Terrier", "Others": "Autres",
+        // Cats
+        "Abyssinian": "Abyssin", "American Bobtail": "Bobtail Américain (Poil long – Poil court)", "American Curl": "American Curl (Poil long – Poil court)", "American Shorthair": "American Shorthair", "American Wirehair": "American Wirehair", "Asian": "Asiatique (Poil long – Poil court)", "Australian Mist": "Australian Mist", "Balinese": "Balinais", "Bengal": "Bengal", "Birman (Sacred Birman)": "Sacré de Birmanie", "Bohemian Rex": "Rex de Bohême", "Bombay": "Bombay", "British Longhair": "Britannique à Poil Long", "British Shorthair": "Britannique à Poil Court", "Burmese": "Burmese", "Burmilla": "Burmilla", "Californian Rex": "Rex Californien", "Chartreux": "Chartreux", "Cornish Rex": "Cornish Rex", "Cymric": "Cymric (Manx à poil mi-long)", "Devon Rex": "Devon Rex", "Domestic Cat": "Chat Domestique (Poil long – Poil court)", "Donskoy (Don Sphynx)": "Donskoy (Sphynx du Don)", "Egyptian Mau": "Mau Égyptien", "European": "Européen", "Exotic Fold": "Exotic Fold", "Exotic Shorthair": "Exotic Shorthair", "German Rex": "Rex Allemand", "Highland Fold": "Highland Fold (Écossais à Poil Long)", "Himalayan": "Himalayen", "Japanese Bobtail": "Bobtail Japonais", "Korat": "Korat", "Kurilian Bobtail": "Bobtail des Kouriles (Poil long – Poil court)", "LaPerm": "LaPerm (Poil long – Poil court)", "Lykoi": "Lykoï", "Maine Coon": "Maine Coon", "Manx": "Manx", "Mekong Bobtail": "Bobtail du Mékong", "Munchkin": "Munchkin", "Nebelung": "Nebelung", "Neva Masquerade": "Neva Mascarade", "Norwegian Forest Cat": "Norvégien", "Ocicat": "Ocicat", "Oriental": "Oriental (Poil long – Poil court)", "Persian": "Persan", "Peterbald": "Peterbald", "Ragamuffin": "Ragamuffin", "Ragdoll": "Ragdoll", "Russian Blue": "Bleu Russe", "Savannah": "Savannah", "Scottish Fold": "Scottish Fold", "Selkirk Rex": "Selkirk Rex (Poil long – Poil court)", "Siamese": "Siamois", "Siberian": "Sibérien", "Singapura": "Singapura", "Snowshoe": "Snowshoe", "Sokoke": "Sokoke", "Somali": "Somali (Abyssin à poil mi-long)", "Sphynx": "Sphynx", "Thai": "Thaï", "Tiffanie": "Tiffanie", "Tonkinese": "Tonkinois (Poil long – Poil court)", "Toyger": "Toyger", "Turkish Angora": "Angora Turc", "Turkish Van": "Turc de Van",
+        // Dogs
+        "Affenpinscher": "Affenpinscher", "Airedale Terrier": "Airedale Terrier", "Akita Inu": "Akita Inu", "Alaskan Klee Kai": "Alaskan Klee Kai", "Alaskan Malamute": "Malamute de l'Alaska", "American Akita": "Akita Américain", "American Bully": "American Bully", "American Pit Bull Terrier": "American Pit Bull", "American Staffordshire Terrier": "American Staffordshire Terrier (Amstaff)", "Anatolian Shepherd": "Berger d'Anatolie (Kangal ou Karabash)", "Appenzeller Sennenhund": "Bouvier d'Appenzell", "Atlas Shepherd (Aidi)": "Aïdi (Berger de l'Atlas)", "Australian Cattle Dog": "Australian Cattle Dog", "Australian Shepherd": "Berger Australien", "Australian Terrier": "Australian Terrier", "Basenji": "Basenji", "Basset Hound": "Basset", "Beagle": "Beagle", "Bearded Collie": "Colley Barbu", "Beauceron": "Beauceron", "Belgian Malinois": "Malinois", "Belgian Shepherd": "Berger Belge", "Bernese Mountain Dog": "Bouvier Bernois", "Bichon Frise": "Bichon Frisé", "Bloodhound": "Chien de Saint-Hubert (Bloodhound)", "Blue Gascon": "Bleu de Gascogne", "Boerboel": "Boerboel", "Border Collie": "Border Collie", "Border Terrier": "Border Terrier", "Borzoi": "Barzoï", "Boston Terrier": "Boston Terrier", "Bouvier des Ardennes": "Bouvier des Ardennes", "Bouvier des Flandres": "Bouvier des Flandres", "Boxer": "Boxer", "Briard": "Berger de Brie", "Brittany Spaniel": "Épagneul Breton", "Broholmer": "Broholmer", "Brussels Griffon": "Griffon Bruxellois", "Bull Terrier": "Bull Terrier", "Bullmastiff": "Bullmastiff", "Ca de Bou (Majorcan Mastiff)": "Ca de Bou (Dogue de Majorque)", "Cairn Terrier": "Cairn Terrier", "Cane Corso": "Cane Corso (Mâtin Italien)", "Catalan Sheepdog": "Berger Catalan", "Caucasian Shepherd Dog": "Berger du Caucase ou d'Asie Centrale (Ovcharka)", "Cavalier King Charles Spaniel": "Cavalier King Charles Spaniel", "Chihuahua": "Chihuahua (Tête de Pomme / Tête de Cerf)", "Chow Chow": "Chow Chow", "Cocker Spaniel": "Cocker Spaniel", "Collie": "Colley", "Coton de Tulear": "Coton de Tuléar", "Creole or Mangrove Shepherd": "Berger Créole ou des Mangroves", "Czechoslovakian Wolfdog": "Chien-loup Tchécoslovaque", "Dachshund": "Teckel", "Dalmatian": "Dalmatien", "Doberman": "Doberman", "Dogo Argentino": "Dogue Argentin", "Dogue Canario (Presa Canario)": "Dogue des Canaries (Presa Canario)", "Dogue de Bordeaux": "Dogue de Bordeaux (Mâtin Français)", "Dutch Smoushond (Kooikerhondje)": "Kooikerhondje", "English Bulldog": "Bulldog Anglais", "English Pointer": "Pointer Anglais", "Fila Brasileiro": "Fila Brasileiro", "Finnish Spitz": "Spitz Finlandais", "Fox Terrier": "Fox Terrier", "French Bulldog": "Bouledogue Français", "French Foxhound": "Foxhound Français", "American Foxhound": "Foxhound Américain", "German Shepherd": "Berger Allemand", "German Shorthaired Pointer": "Braque Allemand à Poil Court", "German Wirehaired Pointer": "Braque Allemand à Poil Dur", "German Spitz": "Spitz Allemand", "Golden Retriever": "Golden Retriever", "Great Dane": "Danois (Grand Danois)", "Greater Swiss Mountain Dog": "Grand Bouvier Suisse", "Greyhound": "Lévrier Anglais", "Icelandic Sheepdog": "Chien de Berger Islandais", "Italian Greyhound": "Petit Lévrier Italien", "Italian Spitz": "Spitz Italien", "Jack Russell Terrier": "Jack Russell", "Japanese Spaniel (Japanese Chin)": "Chin Japonais", "Japanese Spitz": "Spitz Japonais", "Japanese Terrier": "Terrier Japonais", "King Charles Spaniel": "King Charles Spaniel", "Komondor": "Komondor", "Kooikerhondje": "Kooikerhondje (Petit Chien Hollandais)", "Labrador Retriever": "Labrador Retriever", "Leonberger": "Leonberger", "Lhasa Apso": "Lhassa Apso", "Maltese": "Bichon Maltais", "Mastiff": "Mastiff (Vieux Mâtin Anglais)", "Medium Poodle": "Caniche Moyen", "Toy Poodle": "Caniche Toy", "Mudi": "Mudi", "Neapolitan Mastiff": "Mâtin Napolitain", "Newfoundland": "Terre-Neuve", "Norfolk Terrier": "Norfolk Terrier", "Old English Sheepdog (Bobtail)": "Bobtail (Ancien Chien de Berger Anglais)", "Pekingese": "Pékinois", "Picardy Shepherd": "Berger Picard", "Picardy Spaniel": "Épagneul Picard", "Pinscher": "Pinscher", "Pointer": "Pointer", "Polish Lowland Sheepdog": "Berger Polonais de Plaine", "Pomeranian": "Spitz Nain (Pomeranian)", "Poodle": "Caniche", "Portuguese Shepherd": "Berger Portugais", "Portuguese Water Dog": "Chien d'Eau Portugais", "Pug": "Carlin", "Puli": "Puli", "Pumi": "Pumi", "Pyrenean Mastiff": "Mâtin des Pyrénées", "Pyrenean Mountain Dog": "Chien de Montagne des Pyrénées", "Pyrenean Shepherd": "Berger des Pyrénées", "Rhodesian Ridgeback": "Rhodesian Ridgeback", "Rottweiler": "Rottweiler", "Saint Bernard": "Saint-Bernard", "Saluki": "Saluki", "Samoyed": "Samoyède", "Schnauzer": "Schnauzer", "Scottish Terrier": "Scottish Terrier", "Setter": "Setter", "Shar Pei": "Shar Pei", "Shetland Sheepdog": "Berger des Shetland", "Shiba Inu": "Shiba Inu", "Shih Tzu": "Shih Tzu", "Siberian Husky": "Husky Sibérien", "Silky Terrier": "Silky Terrier", "Spanish Mastiff": "Mâtin Espagnol", "Spitz": "Spitz", "Staffordshire Bull Terrier": "Staffordshire Bull Terrier (Staffie)", "Tibetan Mastiff": "Mâtin du Tibet", "Tibetan Spaniel": "Épagneul Tibétain", "Tibetan Terrier": "Terrier du Tibet", "Tosa": "Tosa (Mâtin Japonais)", "Toy Terrier": "Terrier Toy", "Weimaraner": "Braque de Weimar", "Welsh Corgi": "Corgi Gallois", "Welsh Terrier": "Welsh Terrier", "West Highland White Terrier": "West Highland White Terrier (Westie)", "Whippet": "Whippet", "White Swiss Shepherd": "Berger Blanc Suisse", "Yorkshire Terrier": "Yorkshire Terrier", 
+        // Other
         "Chinchilla": "Chinchilla", "Guinea Pig": "Cochon d'Inde", "Ferret": "Furet", "Gecko": "Gecko", "Lizard": "Lézard", "Salamander": "Salamandre", "Domestic Rat": "Rat Domestique", "Snake": "Serpent", "Turtle": "Tortue",
         "Ara": "Ara", "Cockatoo": "Cacatoès", "Caique": "Caïque", "Canary": "Canari", "Conure": "Conure", "Eclectus": "Éclectus", "African Grey": "Gris du Gabon", "Lory": "Lori", "Lovebird": "Inséparable", "Ring-necked Parakeet": "Perruche à Collier", "Budgerigar": "Perruche Ondulée", "Amazon Parrot": "Perroquet Amazonien",
         "Holland Lop (lop-eared dwarf)": "Lapin Nain Bélier", "Netherland Dwarf": "Lapin Nain de Couleur", "Angora Dwarf (long-haired)": "Lapin Angora Nain", "Lionhead Rabbit (mane around the head)": "Lapin Tête de Lion", "Dutch Rabbit": "Lapin Hollandais", "Burgundy Fawn": "Fauve de Bourgogne", "Norman": "Normand", "English Butterfly": "Papillon Anglais", "Flemish Giant": "Géant des Flandres", "White Giant Rabbit from Bouscat": "Géant Blanc du Bouscat",
@@ -259,18 +247,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Country Map (English Value -> French Display Text)
     const countryMap_fr = {
-        "Afghanistan": "Afghanistan", "Albania": "Albanie", "Algeria": "Algérie", "Andorra": "Andorre", "Angola": "Angola", "Antigua and Barbuda": "Antigua-et-Barbuda", "Argentina": "Argentine", "Armenia": "Arménie", "Australia": "Australie", "Austria": "Autriche", "Azerbaijan": "Azerbaïdjan", "Bahamas": "Bahamas", "Bahrain": "Bahreïn", "Bangladesh": "Bangladesh", "Barbados": "Barbade", "Belarus": "Bélarus", "Belgium": "Belgique", "Belize": "Belize", "Benin": "Bénin", "Bhutan": "Bhoutan", "Bolivia": "Bolivie", "Bosnia and Herzegovina": "Bosnie-Herzégovine", "Botswana": "Botswana", "Brazil": "Brésil", "Brunei": "Brunei", "Bulgaria": "Bulgarie", "Burkina Faso": "Burkina Faso", "Burundi": "Burundi", "Cabo Verde": "Cabo Verde", "Cambodia": "Cambodge", "Cameroon": "Cameroun", "Canada": "Canada", "Central African Republic": "République centrafricaine", "Chad": "Tchad", "Chile": "Chili", "China": "Chine", "Colombia": "Colombie", "Comoros": "Comores", "Costa Rica": "Costa Rica", "Croatia": "Croatie", "Cuba": "Cuba", "Cyprus": "Chypre", "Czech Republic": "République Tchèque", "Democratic Republic of the Congo": "République démocratique du Congo", "Denmark": "Danemark", "Djibouti": "Djibouti", "Dominica": "Dominique", "Dominican Republic": "République Dominicaine", "Ecuador": "Équateur", "Egypt": "Égypte", "El Salvador": "El Salvador", "Equatorial Guinea": "Guinée équatoriale", "Eritrea": "Érythrée", "Estonia": "Estonie", "Eswatini": "Eswatini", "Ethiopia": "Éthiopie", "Fiji": "Fidji", "Finland": "Finlande", "France": "France", "Gabon": "Gabon", "Gambia": "Gambie", "Georgia": "Géorgie", "Germany": "Allemagne", "Ghana": "Ghana", "Greece": "Grèce", "Grenada": "Grenade", "Guatemala": "Guatemala", "Guinea": "Guinée", "Guinea-Bissau": "Guinée-Bissau", "Guyana": "Guyana", "Haiti": "Haïti", "Honduras": "Honduras", "Hungary": "Hongrie", "Iceland": "Islande", "India": "Inde", "Indonesia": "Indonésie", "Iran": "Iran", "Iraq": "Irak", "Ireland": "Irlande", "Israel": "Israël", "Italy": "Italie", "Ivory Coast": "Côte d'Ivoire", "Jamaica": "Jamaïque", "Japan": "Japon", "Jordan": "Jordanie", "Kazakhstan": "Kazakhstan", "Kenya": "Kenya", "Kiribati": "Kiribati", "Kosovo": "Kosovo", "Kuwait": "Koweït", "Kyrgyzstan": "Kirghizistan", "Laos": "Laos", "Latvia": "Lettonie", "Lebanon": "Liban", "Lesotho": "Lesotho", "Liberia": "Libéria", "Libya": "Libye", "Liechtenstein": "Liechtenstein", "Lithuania": "Lituanie", "Luxembourg": "Luxembourg", "Madagascar": "Madagascar", "Malawi": "Malawi", "Malaysia": "Malaisie", "Maldives": "Maldives", "Mali": "Mali", "Malta": "Malte", "Marshall Islands": "Îles Marshall", "Mauritania": "Mauritanie", "Mauritius": "Maurice", "Mexico": "Mexique", "Micronesia": "Micronésie", "Moldova": "Moldavie", "Monaco": "Monaco", "Mongolia": "Mongolie", "Montenegro": "Monténégro", "Morocco": "Maroc", "Mozambique": "Mozambique", "Myanmar": "Myanmar", "Namibia": "Namibie", "Nauru": "Nauru", "Nepal": "Népal", "Netherlands": "Pays-Bas", "New Zealand": "Nouvelle-Zélande", "Nicaragua": "Nicaragua", "Niger": "Niger", "Nigeria": "Nigéria", "North Korea": "Corée du Nord", "North Macedonia": "Macédoine du Nord", "Norway": "Norvège", "Oman": "Oman", "Pakistan": "Pakistan", "Palau": "Palaos", "Panama": "Panama", "Papua New Guinea": "Papouasie-Nouvelle-Guinée", "Paraguay": "Paraguay", "Peru": "Pérou", "Philippines": "Philippines", "Poland": "Pologne", "Portugal": "Portugal", "Qatar": "Qatar", "Republic of the Congo": "République du Congo", "Romania": "Roumanie", "Russia": "Russie", "Rwanda": "Rwanda", "Saint Kitts and Nevis": "Saint-Kitts-et-Nevis", "Saint Lucia": "Sainte-Lucie", "Saint Vincent and the Grenadines": "Saint-Vincent-et-les Grenadines", "Samoa": "Samoa", "San Marino": "Saint-Marin", "Sao Tome and Principe": "Sao Tomé-et-Principe", "Saudi Arabia": "Arabie Saoudite", "Sierra Leone": "Sierra Leone", "Singapore": "Singapour", "Slovakia": "Slovaquie", "Slovenia": "Slovénie", "Solomon Islands": "Îles Salomon", "Somalia": "Somalie", "South Africa": "Afrique du Sud", "South Korea": "Corée du Sud", "South Sudan": "Soudan du Sud", "Spain": "Espagne", "Sri Lanka": "Sri Lanka", "Sudan": "Soudan", "Suriname": "Suriname", "Sweden": "Suède", "Switzerland": "Suisse", "Syria": "Syrie", "Tajikistan": "Tadjikistan", "Tanzania": "Tanzanie", "Thailand": "Thaïlande", "Timor-Leste": "Timor-Leste", "Togo": "Togo", "Tonga": "Tonga", "Trinidad and Tobago": "Trinité-et-Tobago", "Tunisia": "Tunisie", "Turkey": "Turquie", "Turkmenistan": "Turkménistan", "Tuvalu": "Tuvalu", "Uganda": "Ouganda", "Ukraine": "Ukraine", "United Arab Emirates": "Émirats arabes unis", "United Kingdom": "Royaume-Uni", "United States of America": "États-Unis", "Uruguay": "Uruguay", "Uzbekistan": "Ouzbékistan", "Vanuatu": "Vanuatu", "Vatican City": "Cité du Vatican", "Venezuela": "Venezuela", "Vietnam": "Vietnam", "Yemen": "Yémen", "Zambia": "Zambie", "Zimbabwe": "Zimbabwe"
+        "Afghanistan": "Afghanistan", "Albania": "Albanie", "Algeria": "Algérie", "Andorra": "Andorre", "Angola": "Angola", "Antigua and Barbuda": "Antigua-et-Barbuda", "Argentina": "Argentine", "Armenia": "Arménie", "Australia": "Australie", "Austria": "Autriche", "Azerbaijan": "Azerbaïdjan", "Bahamas": "Bahamas", "Bahrain": "Bahreïn", "Bangladesh": "Bangladesh", "Barbados": "Barbade", "Belarus": "Bélarus", "Belgium": "Belgique", "Belize": "Belize", "Benin": "Bénin", "Bhutan": "Bhoutan", "Bolivia": "Bolivie", "Bosnia and Herzegovina": "Bosnie-Herzégovine", "Botswana": "Botswana", "Brazil": "Brésil", "Brunei": "Brunei", "Bulgaria": "Bulgarie", "Burkina Faso": "Burkina Faso", "Burundi": "Burundi", "Cabo Verde": "Cabo Verde", "Cambodia": "Cambodge", "Cameroon": "Cameroun", "Canada": "Canada", "Central African Republic": "République centrafricaine", "Chad": "Tchad", "Chile": "Chili", "China": "Chine", "Colombia": "Colombie", "Comoros": "Comores", "Costa Rica": "Costa Rica", "Croatia": "Croatie", "Cuba": "Cuba", "Cyprus": "Chypre", "Czech Republic": "République Tchèque", "Democratic Republic of the Congo": "République démocratique du Congo", "Denmark": "Danemark", "Djibouti": "Djibouti", "Dominica": "Dominique", "Dominican Republic": "République Dominicaine", "Ecuador": "Équateur", "Egypt": "Égypte", "El Salvador": "El Salvador", "Equatorial Guinea": "Guinée équatoriale", "Eritrea": "Érythrée", "Estonia": "Estonie", "Eswatini": "Eswatini", "Ethiopia": "Éthiopie", "Fiji": "Fidji", "Finland": "Finlande", "France": "France", "Gabon": "Gabon", "Gambia": "Gambie", "Georgia": "Géorgie", "Germany": "Allemagne", "Ghana": "Ghana", "Greece": "Grèce", "Grenada": "Grenade", "Guatemala": "Guatemala", "Guinea": "Guinée", "Guinea-Bissau": "Guinée-Bissau", "Guyana": "Guyana", "Haiti": "Haïti", "Honduras": "Honduras", "Hungary": "Hongrie", "Iceland": "Islande", "India": "Inde", "Indonesia": "Indonésie", "Iran": "Iran", "Iraq": "Irak", "Ireland": "Irlande", "Israel": "Israël", "Italy": "Italie", "Ivory Coast": "Côte d'Ivoire", "Jamaica": "Jamaïque", "Japan": "Japon", "Jordan": "Jordanie", "Kazakhstan": "Kazakhstan", "Kenya": "Kenya", "Kiribati": "Kiribati", "Kosovo": "Kosovo", "Kuwait": "Koweït", "Kyrgyzstan": "Kirghizistan", "Laos": "Laos", "Latvia": "Lettonie", "Lebanon": "Liban", "Lesotho": "Lesotho", "Liberia": "Libéria", "Libya": "Libye", "Liechtenstein": "Liechtenstein", "Lithuania": "Lituanie", "Luxembourg": "Luxembourg", "Madagascar": "Madagascar", "Malawi": "Malawi", "Malaysia": "Malaisie", "Maldives": "Maldives", "Mali": "Mali", "Malta": "Malte", "Marshall Islands": "Îles Marshall", "Mauritania": "Mauritanie", "Mauritius": "Maurice", "Mexico": "Mexique", "Micronesia": "Micronésie", "Moldova": "Moldavie", "Monaco": "Monaco", "Mongolia": "Mongolie", "Montenegro": "Monténégro", "Morocco": "Maroc", "Mozambique": "Mozambique", "Myanmar": "Myanmar", "Namibia": "Namibie", "Nauru": "Nauru", "Nepal": "Népal", "Netherlands": "Pays-Bas", "New Zealand": "Nouvelle-Zélande", "Nicaragua": "Nicaragua", "Niger": "Niger", "Nigeria": "Nigéria", "North Korea": "Corée du Nord", "North Macedonia": "Macédoine du Nord", "Norway": "Norvège", "Oman": "Oman", "Pakistan": "Pakistan", "Palau": "Palaos", "Panama": "Panama", "Papua New Guinea": "Papouasie-Nouvelle-Guinée", "Paraguay": "Paraguay", "Peru": "Pérou", "Philippines": "Philippines", "Poland": "Pologne", "Portugal": "Portugal", "Qatar": "Qatar", "Republic of the Congo": "République du Congo", "Romania": "Roumanie", "Russia": "Russie", "Rwanda": "Rwanda", "Saint Kitts and Nevis": "Saint-Kitts-et-Nevis", "Saint Lucia": "Sainte-Lucie", "Saint Vincent and the Grenadines": "Saint-Vincent-et-les-Grenadines", "Samoa": "Samoa", "San Marino": "Saint-Marin", "Sao Tome and Principe": "Sao Tomé-et-Principe", "Saudi Arabia": "Arabie Saoudite", "Sierra Leone": "Sierra Leone", "Singapore": "Singapour", "Slovakia": "Slovaquie", "Slovenia": "Slovénie", "Solomon Islands": "Îles Salomon", "Somalia": "Somalie", "South Africa": "Afrique du Sud", "South Korea": "Corée du Sud", "South Sudan": "Soudan du Sud", "Spain": "Espagne", "Sri Lanka": "Sri Lanka", "Sudan": "Soudan", "Suriname": "Suriname", "Sweden": "Suède", "Switzerland": "Suisse", "Syria": "Syrie", "Tajikistan": "Tadjikistan", "Tanzania": "Tanzanie", "Thailand": "Thaïlande", "Timor-Leste": "Timor-Leste", "Togo": "Togo", "Tonga": "Tonga", "Trinidad and Tobago": "Trinité-et-Tobago", "Tunisia": "Tunisie", "Turkey": "Turquie", "Turkmenistan": "Turkménistan", "Tuvalu": "Tuvalu", "Uganda": "Ouganda", "Ukraine": "Ukraine", "United Arab Emirates": "Émirats arabes unis", "United Kingdom": "Royaume-Uni", "United States of America": "États-Unis d'Amérique", "Uruguay": "Uruguay", "Uzbekistan": "Ouzbékistan", "Vanuatu": "Vanuatu", "Vatican City": "Cité du Vatican", "Venezuela": "Venezuela", "Vietnam": "Vietnam", "Yemen": "Yémen", "Zambia": "Zambie", "Zimbabwe": "Zimbabwe"
     };
 
     // --- Data Lists (Standard English names, used for internal 'value' and logic) ---
     const qualifiedDogs = [
         "Affenpinscher", "American Akita", "Akita Inu", "American Bully", "American Staffordshire Terrier", "Beauceron", "Anatolian Shepherd", "Caucasian Shepherd Dog",
-        "Old English Sheepdog (Bobtail)", "Boerboel", "Boston Terrier", "English Bulldog", "French Bulldog", "Bernese Mountain Dog", "Bouvier des Flandres", "Bouvier des Ardennes",
-        "Boxer", "Broholmer", "Bull Terrier", "Bullmastiff", "Ca de Bou (Majorcan Mastiff)", "Cane Corso", "Pug", "Cavalier King Charles Spaniel",
-        "Pyrenean Mountain Dog", "Portuguese Water Dog", "Czechoslovakian Wolfdog", "Bloodhound", "Chihuahua", "Chow Chow", "Dogue de Bordeaux", "Doberman",
-        "Dogo Argentino", "Dogo Canario (Presa Canario)", "Great Dane", "Japanese Spaniel (Japanese Chin)", "King Charles Spaniel", "Tibetan Spaniel", "Brussels Griffon", "Komondor",
-        "Leonberger", "Lhasa Apso", "Tibetan Mastiff", "Pyrenean Mastiff", "Spanish Mastiff", "Neapolitan Mastiff", "Mastiff", "Pekingese", "Petit Brabançon",
-        "Rottweiler", "Saint Bernard", "Shar Pei", "Shih Tzu", "Staffordshire Bull Terrier", "Newfoundland", "Tosa", "Fila Brasileiro"
+        "Old English Sheepdog (Bobtail)", "Boerboel", "Bull Terrier", "Bullmastiff", "Ca de Bou (Majorcan Mastiff)", "Cane Corso", "Dogo Argentino", 
+        "Dogue de Bordeaux", "Doberman", "Fila Brasileiro", "Mastiff", "Neapolitan Mastiff", "Rottweiler", "Saint Bernard", "Staffordshire Bull Terrier", 
+        "Tibetan Mastiff", "Tosa", "Boston Terrier", "English Bulldog", "French Bulldog", "Bernese Mountain Dog", "Bouvier des Flandres", "Bouvier des Ardennes",
+        "Boxer", "Broholmer", "Brussels Griffon", "Cavalier King Charles Spaniel", "Chow Chow", "Dogue Canario (Presa Canario)", "Great Dane", 
+        "Greater Swiss Mountain Dog", "Komondor", "Leonberger", "Pekingese", "Pug", "Pyrenean Mastiff", "Pyrenean Mountain Dog", "Shar Pei"
     ];
 
     const qualifiedCats = [
@@ -280,20 +267,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const nacBreeds = [
         "Chinchilla", "Guinea Pig", "Ferret", "Gecko", "Lizard", "Salamander", "Domestic Rat", "Snake", "Turtle", "Others"
     ];
-
-    const qualifiedCountries = [
-        "France", "Mauritius", "Australia", "New Caledonia", "New Zealand", "South Africa",
-        "Ireland", "Wallis and Futuna", "Bahrain", "Hong Kong", "Dubai", "United Kingdom",
-        "French Polynesia"
+    
+    // Updated Dog and Cat Lists
+    const dogBreeds = [
+        "Affenpinscher", "Airedale Terrier", "Akita Inu", "Alaskan Klee Kai", "Alaskan Malamute", "American Akita", "American Bully", "American Pit Bull Terrier", "American Staffordshire Terrier", 
+        "Anatolian Shepherd", "Appenzeller Sennenhund", "Atlas Shepherd (Aidi)", "Australian Cattle Dog", "Australian Shepherd", "Australian Terrier", "Basenji", "Basset Hound", 
+        "Beagle", 
+        "Bearded Collie", "Beauceron", "Belgian Malinois", "Belgian Shepherd", "Bernese Mountain Dog", "Bichon Frise", "Bloodhound", "Blue Gascon", 
+        "Boerboel", "Border Collie", "Border Terrier", "Borzoi", "Boston Terrier", "Bouvier des Ardennes", "Bouvier des Flandres", "Boxer", "Briard", 
+        "Brittany Spaniel", "Broholmer", "Brussels Griffon", "Bull Terrier", "Bullmastiff", "Ca de Bou (Majorcan Mastiff)", "Cairn Terrier", "Cane Corso", 
+        "Catalan Sheepdog", "Caucasian Shepherd Dog", "Cavalier King Charles Spaniel", "Chihuahua", "Chow Chow", "Cocker Spaniel", "Collie", "Coton de Tulear", 
+        "Creole or Mangrove Shepherd", 
+        "Czechoslovakian Wolfdog", "Dachshund", "Dalmatian", "Doberman", "Dogo Argentino", "Dogue Canario (Presa Canario)", 
+        "Dogue de Bordeaux", "Dutch Smoushond (Kooikerhondje)", "English Bulldog", "English Pointer", "Fila Brasileiro", "Finnish Spitz", "Fox Terrier", 
+        "French Bulldog", "French Foxhound", "American Foxhound", 
+        "German Shepherd", "German Shorthaired Pointer", "German Wirehaired Pointer", 
+        "German Spitz", "Golden Retriever", "Great Dane", "Greater Swiss Mountain Dog", "Greyhound", "Icelandic Sheepdog", "Italian Greyhound", 
+        "Italian Spitz", "Jack Russell Terrier", "Japanese Spaniel (Japanese Chin)", "Japanese Spitz", "Japanese Terrier", "King Charles Spaniel", 
+        "Komondor", "Kooikerhondje", 
+        "Labrador Retriever", "Leonberger", "Lhasa Apso", "Maltese", "Mastiff", "Medium Poodle", "Toy Poodle", 
+        "Mudi", "Neapolitan Mastiff", "Newfoundland", "Norfolk Terrier", "Old English Sheepdog (Bobtail)", "Pekingese", 
+        "Picardy Shepherd", "Picardy Spaniel", 
+        "Pinscher", "Pointer", "Polish Lowland Sheepdog", "Pomeranian", "Poodle", "Portuguese Shepherd", 
+        "Portuguese Water Dog", "Pug", "Puli", "Pumi", 
+        "Pyrenean Mastiff", "Pyrenean Mountain Dog", "Pyrenean Shepherd", "Rhodesian Ridgeback", "Rottweiler", 
+        "Saint Bernard", "Saluki", "Samoyed", "Schnauzer", "Scottish Terrier", "Setter", "Shar Pei", "Shetland Sheepdog", "Shiba Inu", "Shih Tzu", 
+        "Siberian Husky", "Silky Terrier", "Spanish Mastiff", "Spitz", "Staffordshire Bull Terrier", "Tibetan Mastiff", "Tibetan Spaniel", 
+        "Tibetan Terrier", "Tosa", "Toy Terrier", "Weimaraner", "Welsh Corgi", "Welsh Terrier", "West Highland White Terrier", "Whippet", 
+        "White Swiss Shepherd", "Yorkshire Terrier", "Others"
     ];
 
-   const breeds = {
-         'Cat': [
-             "Abyssinian", "American Bobtail", "American Curl", "American Shorthair", "American Wirehair", "Asian", "Australian Mist", "Balinese", "Bengal", "Birman (Sacred Birman)", "Bohemian Rex", "Bombay", "British Longhair", "British Shorthair", "Burmese", "Burmilla", "Californian Rex", "Chartreux", "Cornish Rex", "Cymric", "Devon Rex", "Domestic Cat", "Donskoy (Don Sphynx)", "Egyptian Mau", "European", "Exotic Fold", "Exotic Shorthair", "German Rex", "Highland Fold", "Himalayan", "Japanese Bobtail", "Korat", "Kurilian Bobtail", "LaPerm", "Lykoi", "Maine Coon", "Manx", "Mekong Bobtail", "Munchkin", "Nebelung", "Neva Masquerade", "Norwegian Forest Cat", "Ocicat", "Oriental", "Persian", "Peterbald", "Ragamuffin", "Ragdoll", "Russian Blue", "Savannah", "Scottish Fold", "Selkirk Rex", "Siamese", "Siberian", "Singapura", "Snowshoe", "Sokoke", "Somali", "Sphynx", "Thai", "Tiffanie", "Tonkinese", "Toyger", "Turkish Angora", "Turkish Van", "Others"
-         ],
-         'Dog': [
-             "Affenpinscher", "Airedale Terrier", "Akita Inu", "Alaskan Klee Kai", "Alaskan Malamute", "American Akita", "American Bully", "American Pit Bull Terrier", "American Staffordshire Terrier", "Anatolian Shepherd", "Appenzeller Sennenhund", "Atlas Shepherd (Aidi)", "Australian Cattle Dog", "Australian Shepherd", "Australian Terrier", "Basenji", "Basset Hound", "Bearded Collie", "Beauceron", "Belgian Malinois", "Belgian Shepherd", "Bernese Mountain Dog", "Bichon Frise", "Bloodhound", "Boerboel", "Border Collie", "Border Terrier", "Borzoi", "Boston Terrier", "Bouvier des Ardennes", "Bouvier des Flandres", "Boxer", "Briard", "Brittany Spaniel", "Broholmer", "Brussels Griffon", "Bull Terrier", "Bullmastiff", "Ca de Bou (Majorcan Mastiff)", "Cairn Terrier", "Cane Corso", "Catalan Sheepdog", "Caucasian Shepherd Dog", "Cavalier King Charles Spaniel", "Chihuahua", "Chow Chow", "Cocker Spaniel", "Collie", "Coton de Tulear", "Czechoslovakian Wolfdog", "Dachshund", "Dalmatian", "Doberman", "Dogo Argentino", "Dogue de Bordeaux", "Dutch Smoushond (Kooikerhondje)", "English Bulldog", "English Pointer", "Fila Brasileiro", "Finnish Spitz", "Fox Terrier", "French Bulldog", "German Shepherd", "German Spitz", "Golden Retriever", "Great Dane", "Greater Swiss Mountain Dog", "Greyhound", "Icelandic Sheepdog", "Italian Greyhound", "Italian Spitz", "Jack Russell Terrier", "Japanese Spaniel (Japanese Chin)", "Japanese Spitz", "Japanese Terrier", "King Charles Spaniel", "Komondor", "Labrador Retriever", "Leonberger", "Lhasa Apso", "Maltese", "Mastiff", "Neapolitan Mastiff", "Newfoundland", "Norfolk Terrier", "Old English Sheepdog (Bobtail)", "Pekingese", "Picardy Shepherd", "Pinscher", "Pointer", "Polish Lowland Sheepdog", "Pomeranian", "Poodle", "Portuguese Water Dog", "Pug", "Puli/Pumi/Mudi", "Pyrenean Mastiff", "Pyrenean Mountain Dog", "Pyrenean Shepherd", "Rhodesian Ridgeback", "Rottweiler", "Saint Bernard", "Saluki", "Samoyed", "Schnauzer", "Scottish Terrier", "Setter", "Shar Pei", "Shetland Sheepdog", "Shiba Inu", "Shih Tzu", "Siberian Husky", "Skye Terrier", "Staffordshire Bull Terrier", "Standard Poodle", "Swiss White Shepherd", "Tervuren Shepherd", "Tibetan Mastiff", "Tibetan Spaniel", "Tibetan Terrier", "Tosa", "Weimaraner", "Welsh Corgi", "Welsh Terrier", "West Highland White Terrier", "Whippet", "Yorkshire Terrier", "Others"
-         ],
+    const catBreeds = [
+        "Abyssinian", "American Bobtail", "American Curl", "American Shorthair", "American Wirehair", "Turkish Angora", "Asian", "Australian Mist", 
+        "Balinese", "Bengal", "Birman (Sacred Birman)", "Bohemian Rex", "Bombay", "British Longhair", "British Shorthair", "Burmese", "Burmilla", 
+        "Californian Rex", "Chartreux", "Domestic Cat", "Norwegian Forest Cat", "Cornish Rex", "Siamese", "Cymric", "Devon Rex", "Donskoy (Don Sphynx)", 
+        "Exotic Shorthair", "Exotic Fold", "German Rex", "Himalayan", "Highland Fold", "Korat", "Kurilian Bobtail", "LaPerm", "Lykoi", 
+        "Maine Coon", "Manx", "Egyptian Mau", "Mekong Bobtail", "Munchkin", "Nebelung", "Neva Masquerade", "Ocicat", "Oriental", 
+        "Persian", "Peterbald", "Ragamuffin", "Ragdoll", "Russian Blue", "Scottish Fold", "Selkirk Rex", "Savannah", "Siberian", 
+        "Singapura", "Snowshoe", "Sokoke", "Somali", "Sphynx", "Thai", "Tiffanie", "Tonkinese", "Toyger", "Turkish Van", "European", 
+        "Others"
+    ];
+
+    const breeds = {
+         'Cat': catBreeds,
+         'Dog': dogBreeds,
          'NAC': nacBreeds,
          'Bird': [
              "Ara", "Cockatoo", "Caique", "Canary", "Conure", "Eclectus", "African Grey",
@@ -305,6 +322,13 @@ document.addEventListener('DOMContentLoaded', () => {
          ],
          'Others': []
     };
+
+    const qualifiedCountries = [
+        "France", "Mauritius", "Australia", "New Caledonia", "New Zealand", "South Africa",
+        "Ireland", "Wallis and Futuna", "Bahrain", "Hong Kong", "Dubai", "United Kingdom",
+        "French Polynesia"
+    ];
+
     // --- DOM Elements & Initial Setup ---
     const page1 = document.getElementById('page-1');
     const page2 = document.getElementById('page-2');
@@ -316,14 +340,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevPage2Btn = document.getElementById('prev-page-2-btn');
     const nextPage2Btn = document.getElementById('next-page-2-btn');
     const prevPage3Btn = document.getElementById('prev-page-3-btn');
-    const nextPage3Btn = document.getElementById('next-page-3-btn'); // New: next button for page 3
-    const prevPage4Btn = document.getElementById('prev-page-4-btn'); // New: previous button for page 4
+    const nextPage3Btn = document.getElementById('next-page-3-btn');
+    const prevPage4Btn = document.getElementById('prev-page-4-btn');
+    
     const langToggleBtn = document.getElementById('lang-toggle-btn');
 
     const petFormsContainer = document.getElementById('pet-forms-container');
     const form = document.getElementById('pet-form');
 
-    const conditionalQuestion = document.getElementById('conditional-question');
+    const conditionalQuestion = document.getElementById('travel-options-group');
     const travelOption = document.getElementById('travel-option');
     const contextField = document.getElementById('context-field');
     const contextSelect = document.getElementById('context');
@@ -340,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return value; // Default to English/Value
     }
 
-    // --- Language Update Function (now includes country translation) ---
+    // --- Language Update Function ---
     function updateContent(lang) {
         const t = translations[lang];
 
@@ -350,8 +375,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (t[key]) {
                 if (element.tagName === 'OPTION') {
                     element.textContent = t[key];
-                } else if (element.tagName === 'INPUT' && element.type === 'submit') {
-                    element.value = t[key];
+                } else if (element.tagName === 'BUTTON' || (element.tagName === 'INPUT' && element.type === 'submit')) {
+                    element.textContent = t[key];
                 } else {
                     element.textContent = t[key];
                 }
@@ -363,15 +388,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const countryMap = lang === 'fr' ? countryMap_fr : {}; // Use French map or empty map for English
 
         countrySelects.forEach(select => {
-            // Iterate over options that are NOT the placeholder option (which has data-key="select_country_option")
             select.querySelectorAll('option:not([data-key="select_country_option"])').forEach(option => {
                 const englishValue = option.value;
-                // If in French, use the translation; otherwise, use the English value (which is the default text in HTML)
                 option.textContent = countryMap[englishValue] || englishValue;
             });
         });
 
-        // 3. Update pet forms (dynamic content: Animal Type and Breed options)
+        // 3. Update pet forms
         renumberPets();
         
         // 4. Update the language toggle button text and attribute
@@ -386,16 +409,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const petForms = document.querySelectorAll('.pet-form');
         const t = translations[currentLang];
         petForms.forEach((petForm, index) => {
+            const petId = index + 1;
             const heading = petForm.querySelector('h4');
             if (heading) {
-                heading.textContent = `${t.pet_heading} ${index + 1}`;
+                heading.textContent = `${t.pet_heading} ${petId}`;
             }
+            
             // Update static labels/buttons within the pet form
             petForm.querySelector('label[for^="animal-type"]').textContent = t.animal_type_label;
             const breedLabel = petForm.querySelector('label[for^="breed"]');
             if (breedLabel) breedLabel.textContent = t.breed_label;
-            const otherAnimalLabel = petForm.querySelector('label[for^="other-animal-custom"]');
-            if (otherAnimalLabel) otherAnimalLabel.textContent = t.other_animal_label;
             petForm.querySelector('label[for^="age"]').textContent = t.age_label;
             petForm.querySelector('label[for^="weight"]').textContent = t.weight_label;
             petForm.querySelector('.remove-pet-btn').textContent = t.remove_pet_btn;
@@ -407,7 +430,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (defaultOption) defaultOption.textContent = t.choose_animal_type;
                 
                 typeSelect.querySelectorAll('option:not([value=""])').forEach(option => {
-                    // Translate the display text using the English value
                     option.textContent = translateOption(option.value, currentLang);
                 });
             }
@@ -419,10 +441,19 @@ document.addEventListener('DOMContentLoaded', () => {
                  if (defaultOption) defaultOption.textContent = t.select_breed;
                  
                  breedSelect.querySelectorAll('option:not([value=""])').forEach(option => {
-                    // Translate the display text using the English value
                     option.textContent = translateOption(option.value, currentLang);
                 });
             }
+
+            // Update Custom Specification Label dynamically
+            const customSpecLabel = petForm.querySelector(`#custom-spec-label-${petId}`);
+            if (customSpecLabel) {
+                 if (typeSelect && typeSelect.value === 'Others') {
+                     customSpecLabel.textContent = t.other_animal_label; // Type & Breed
+                 } else if (breedSelect && breedSelect.value === 'Others') {
+                     customSpecLabel.textContent = t.specify_breed_label; // Just Breed
+                 }
+             }
         });
     }
 
@@ -451,9 +482,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <select id="breed-${petIdCounter}" name="breed-${petIdCounter}"></select>
             </div>
 
-            <div class="other-animal-container" style="display: none;">
-                <label for="other-animal-custom-${petIdCounter}">${t.other_animal_label}</label>
-                <input type="text" id="other-animal-custom-${petIdCounter}" name="other-animal-custom-${petIdCounter}">
+            <div class="custom-specification-container" style="display: none;">
+                <label for="custom-spec-${petIdCounter}" id="custom-spec-label-${petIdCounter}">${t.other_animal_label}</label>
+                <input type="text" id="custom-spec-${petIdCounter}" name="custom-spec-${petIdCounter}">
             </div>
 
             <label for="age-${petIdCounter}">${t.age_label}</label>
@@ -468,29 +499,47 @@ document.addEventListener('DOMContentLoaded', () => {
         petFormsContainer.appendChild(petForm);
         renumberPets();
 
-        // Event listener for the new animal type dropdown
+        // DOM Elements for the new form instance
         const animalTypeSelect = petForm.querySelector(`#animal-type-${petIdCounter}`);
+        const breedContainer = petForm.querySelector('.breed-container');
+        const breedSelect = petForm.querySelector(`#breed-${petIdCounter}`);
         
-        animalTypeSelect.addEventListener('change', (e) => {
-            const breedContainer = petForm.querySelector('.breed-container');
-            const breedSelect = petForm.querySelector(`#breed-${petIdCounter}`);
-            const otherContainer = petForm.querySelector('.other-animal-container');
-            const otherInput = petForm.querySelector(`#other-animal-custom-${petIdCounter}`);
-            
-            const selectedType = e.target.value;
+        // Custom Specification Fields
+        const customSpecContainer = petForm.querySelector('.custom-specification-container');
+        const customSpecInput = petForm.querySelector(`#custom-spec-${petIdCounter}`);
+        const customSpecLabel = petForm.querySelector(`#custom-spec-label-${petIdCounter}`);
 
-            // Reset UI
+
+        // Helper function to handle custom field visibility
+        function updateCustomSpec(isCustom, isTypeOthers) {
+            customSpecContainer.style.display = isCustom ? 'block' : 'none';
+            customSpecInput.required = isCustom;
+            if (isCustom) {
+                // Dynamically change the label text
+                customSpecLabel.textContent = isTypeOthers 
+                    ? translations[currentLang].other_animal_label 
+                    : translations[currentLang].specify_breed_label; 
+            }
+        }
+
+        // --- 1. Animal Type Change Listener ---
+        animalTypeSelect.addEventListener('change', (e) => {
+            const selectedType = e.target.value;
+            
+            // Reset Breed UI
             breedContainer.style.display = 'none';
             breedSelect.required = false;
             breedSelect.innerHTML = '';
             
-            otherContainer.style.display = 'none';
-            otherInput.required = false;
+            // Reset Custom Spec UI
+            updateCustomSpec(false, false);
 
             if (selectedType === 'Others') {
-                otherContainer.style.display = 'block';
-                otherInput.required = true;
+                // Case 1: Animal Type is 'Others'. Show custom input for Type & Breed.
+                updateCustomSpec(true, true);
             } else if (selectedType && breeds[selectedType]) {
+                // Case 2: Animal Type is specific (Dog, Cat, etc.). Populate breeds.
+                
                 const t_select_breed = translations[currentLang].select_breed;
                 breedSelect.innerHTML = `<option value="">${t_select_breed}</option>`;
                 
@@ -500,8 +549,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     option.textContent = translateOption(breed_value, currentLang); // Translated display text
                     breedSelect.appendChild(option);
                 });
+                
                 breedContainer.style.display = 'block';
                 breedSelect.required = true;
+                
+                // --- 2. Breed Change Listener (added here as the select is populated) ---
+                breedSelect.addEventListener('change', () => {
+                    if (breedSelect.value === 'Others') {
+                        // Case 3: Breed is 'Others'. Show custom input for Breed only.
+                        updateCustomSpec(true, false);
+                    } else {
+                        updateCustomSpec(false, false);
+                    }
+                });
             }
         });
 
@@ -511,12 +571,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (input.name.startsWith('age')) {
                     input.value = input.value.replace(/[^0-9]/g, ''); // Allow only integers
                 } else if (input.name.startsWith('weight')) {
-                    // Allow digits and a single decimal point
                     let value = input.value;
-                    value = value.replace(/[^0-9.]/g, ''); // Remove non-numeric and non-dot characters
+                    value = value.replace(/[^0-9.]/g, ''); 
                     const parts = value.split('.');
                     if (parts.length > 2) {
-                        // If there's more than one decimal point, keep only the first one
                         value = parts[0] + '.' + parts.slice(1).join(''); 
                     }
                     input.value = value;
@@ -542,8 +600,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let isValid = true;
         const requiredInputs = pageElement.querySelectorAll('[required]');
 
+        // 1. General Required Check
         requiredInputs.forEach(input => {
-            // Check visibility
             let isVisible = false;
             
             const style = window.getComputedStyle(input);
@@ -570,6 +628,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.classList.remove('error');
             }
         });
+
+        // 2. Specific Validation for Page 4 (Contact Info)
+        if (pageElement.id === 'page-4') {
+            const firstName = document.getElementById('first-name');
+            const lastName = document.getElementById('last-name');
+            const email = document.getElementById('email');
+            const phone = document.getElementById('phone');
+
+            // Regex: Letters, spaces, hyphens, apostrophes. No numbers.
+            const nameRegex = /^[a-zA-Z\u00C0-\u00FF\s'-]+$/;
+            
+            if (firstName && !nameRegex.test(firstName.value.trim())) {
+                isValid = false;
+                firstName.classList.add('error');
+            }
+            if (lastName && !nameRegex.test(lastName.value.trim())) {
+                isValid = false;
+                lastName.classList.add('error');
+            }
+
+            // Simple Email Regex
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email.value.trim())) {
+                isValid = false;
+                email.classList.add('error');
+            }
+
+            // Phone Validation via intl-tel-input
+            if (phone) {
+                if (!phoneIti.isValidNumber()) {
+                    isValid = false;
+                    phone.classList.add('error');
+                } else {
+                    phone.classList.remove('error');
+                }
+            }
+        }
+
         return isValid;
     }
 
@@ -628,13 +724,11 @@ document.addEventListener('DOMContentLoaded', () => {
         prevPage4Btn.addEventListener('click', () => {
             page4.style.display = 'none';
             page3.style.display = 'block';
-            checkQualification(); // Re-run qualification logic when returning to Page 3
         });
     }
 
     // --- Conditional Logic (Page 3) ---
     function checkQualification() {
-        // Correctly retrieves the value from the destination country field
         const destinationCountryElement = document.getElementById('destination-country');
         const destinationCountry = destinationCountryElement ? destinationCountryElement.value : '';
         const petForms = document.querySelectorAll('.pet-form');
@@ -645,18 +739,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const animalTypeSelect = petForm.querySelector('select[name^="animal-type"]');
             const breedSelect = petForm.querySelector('select[name^="breed"]');
             
-            // Values are always the English/Standard name for the check
             const animalType = animalTypeSelect ? animalTypeSelect.value : '';
             const breed = breedSelect ? breedSelect.value : '';
 
-            // 1. Check Specific Qualified Breeds (using English/Standard list)
             if (animalType === 'Dog' && qualifiedDogs.includes(breed)) {
                 isAtLeastOnePetQualified = true;
             } 
             else if (animalType === 'Cat' && qualifiedCats.includes(breed)) {
                 isAtLeastOnePetQualified = true;
             } 
-            // 2. Check Auto-Qualified Types (Bird, Rabbit, NAC)
             else if (['Bird', 'Rabbit', 'NAC'].includes(animalType)) {
                 isAtLeastOnePetQualified = true;
             }
@@ -664,14 +755,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const isCountryQualified = qualifiedCountries.includes(destinationCountry);
 
-        // Logic: Question appears ONLY if Country is Negative AND All Pets are Negative.
         if (!isCountryQualified && !isAtLeastOnePetQualified) {
             conditionalQuestion.style.display = 'block';
             travelOption.required = true;
         } else {
             conditionalQuestion.style.display = 'none';
             travelOption.required = false;
-            // Reset children
             contextField.style.display = 'none';
             contextSelect.required = false;
             document.getElementById('other-means').required = false;
@@ -714,7 +803,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Validate page 4 fields before submission
+        // Validate Page 4 fields before submitting
         if (!validatePage(page4)) {
             alert(translations[currentLang].error_alert);
             return;
@@ -729,8 +818,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const type = formData.get(`animal-type-${id}`);
             let breedVal = formData.get(`breed-${id}`) || '';
             
-            if (type === 'Others') {
-                breedVal = formData.get(`other-animal-custom-${id}`);
+            const customSpecValue = formData.get(`custom-spec-${id}`); 
+
+            if (type === 'Others' || breedVal === 'Others') {
+                breedVal = customSpecValue; 
             }
 
             data.pets.push({
@@ -751,13 +842,14 @@ document.addEventListener('DOMContentLoaded', () => {
         data['context'] = formData.get('context') || '';
         data['other-means'] = formData.get('other-means') || '';
         data['additional-info'] = formData.get('additional-info');
-        
-        // Page 4 Fields
+
+        // Contact Information
         data['first-name'] = formData.get('first-name');
         data['last-name'] = formData.get('last-name');
         data['email'] = formData.get('email');
-        data['phone-number'] = telInputPhone ? telInputPhone.getNumber() : '';
-        data['whatsapp-number'] = telInputWhatsapp ? telInputWhatsapp.getNumber() : '';
+        // Get full international number from library instances
+        data['phone'] = phoneIti.getNumber(); 
+        data['whatsapp'] = whatsappInput.value ? whatsappIti.getNumber() : '';
 
         console.log('Sending:', data);
 
@@ -767,7 +859,6 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = translations[currentLang].sending;
 
         try {
-            // NOTE: Ensure this URL is correct for your server
             const response = await fetch('https://forms.worldbaggagenetwork.com/wp-json/pet-transport/v1/request', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -781,7 +872,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             alert(translations[currentLang].submit_success);
             form.reset();
-            window.location.reload(); // Refresh to reset state cleanly
+            window.location.reload(); 
 
         } catch (error) {
             console.error(error);

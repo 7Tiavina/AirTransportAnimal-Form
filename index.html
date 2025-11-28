@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-key="title">Formulaire de Transport d'Animaux</title>
-    <!-- IMPORTANT: Remplacez VOTRE_CLE_API par votre propre clé API Google Maps -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOaIw0ZuWRnUn-EXQSip4uJ5RMQjewBxw&libraries=places&v=beta&callback=initAutocomplete" async defer></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/styles/choices.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
 </head>
 <body>
     <div class="form-container">
@@ -26,7 +25,7 @@
             </div>
 
             <div id="page-2" class="page" style="display: none;">
-                <h2 data-key="page2_title">Départ et Destination</h2>
+                <h2 data-key="page2_title">Dites-nous quel est votre projet.</h2>
                 
                 <h3 data-key="departure_title">Départ</h3>
                 <label for="departure-address" data-key="departure_address_label">Adresse:</label>
@@ -115,14 +114,12 @@
                     <option value="Ireland">Ireland</option>
                     <option value="Israel">Israel</option>
                     <option value="Italy">Italy</option>
-                    <option value="Ivory Coast">Ivory Coast</option>
                     <option value="Jamaica">Jamaica</option>
                     <option value="Japan">Japan</option>
                     <option value="Jordan">Jordan</option>
                     <option value="Kazakhstan">Kazakhstan</option>
                     <option value="Kenya">Kenya</option>
                     <option value="Kiribati">Kiribati</option>
-                    <option value="Kosovo">Kosovo</option>
                     <option value="Kuwait">Kuwait</option>
                     <option value="Kyrgyzstan">Kyrgyzstan</option>
                     <option value="Laos">Laos</option>
@@ -185,6 +182,9 @@
                     <option value="San Marino">San Marino</option>
                     <option value="Sao Tome and Principe">Sao Tome and Principe</option>
                     <option value="Saudi Arabia">Saudi Arabia</option>
+                    <option value="Senegal">Senegal</option>
+                    <option value="Serbia">Serbia</option>
+                    <option value="Seychelles">Seychelles</option>
                     <option value="Sierra Leone">Sierra Leone</option>
                     <option value="Singapore">Singapore</option>
                     <option value="Slovakia">Slovakia</option>
@@ -201,6 +201,7 @@
                     <option value="Sweden">Sweden</option>
                     <option value="Switzerland">Switzerland</option>
                     <option value="Syria">Syria</option>
+                    <option value="Taiwan">Taiwan</option>
                     <option value="Tajikistan">Tajikistan</option>
                     <option value="Tanzania">Tanzania</option>
                     <option value="Thailand">Thailand</option>
@@ -315,14 +316,12 @@
                     <option value="Ireland">Ireland</option>
                     <option value="Israel">Israel</option>
                     <option value="Italy">Italy</option>
-                    <option value="Ivory Coast">Ivory Coast</option>
                     <option value="Jamaica">Jamaica</option>
                     <option value="Japan">Japan</option>
                     <option value="Jordan">Jordan</option>
                     <option value="Kazakhstan">Kazakhstan</option>
                     <option value="Kenya">Kenya</option>
                     <option value="Kiribati">Kiribati</option>
-                    <option value="Kosovo">Kosovo</option>
                     <option value="Kuwait">Kuwait</option>
                     <option value="Kyrgyzstan">Kyrgyzstan</option>
                     <option value="Laos">Laos</option>
@@ -385,6 +384,9 @@
                     <option value="San Marino">San Marino</option>
                     <option value="Sao Tome and Principe">Sao Tome and Principe</option>
                     <option value="Saudi Arabia">Saudi Arabia</option>
+                    <option value="Senegal">Senegal</option>
+                    <option value="Serbia">Serbia</option>
+                    <option value="Seychelles">Seychelles</option>
                     <option value="Sierra Leone">Sierra Leone</option>
                     <option value="Singapore">Singapore</option>
                     <option value="Slovakia">Slovakia</option>
@@ -401,6 +403,7 @@
                     <option value="Sweden">Sweden</option>
                     <option value="Switzerland">Switzerland</option>
                     <option value="Syria">Syria</option>
+                    <option value="Taiwan">Taiwan</option>
                     <option value="Tajikistan">Tajikistan</option>
                     <option value="Tanzania">Tanzania</option>
                     <option value="Thailand">Thailand</option>
@@ -430,29 +433,30 @@
 
                 <label for="departure-date" data-key="departure_date_label">Date de départ proposée:</label>
                 <select id="departure-date" name="departure-date" required>
-                    <option value="within-1-month" data-key="date_option_1">Dans 1 mois</option>
-                    <option value="1-to-3-months" data-key="date_option_2">Dans 1 à 3 mois</option>
-                    <option value="beyond-3-months" data-key="date_option_3">Au-delà de 3 mois</option>
-                    <option value="project-under-consideration" data-key="date_option_4">Projet en cours de réflexion</option>
+                    <option value="1-month" data-key="date_option_1">Dans 1 mois</option>
+                    <option value="1-3-months" data-key="date_option_2">Dans 1 à 3 mois</option>
+                    <option value="3-plus-months" data-key="date_option_3">Au-delà de 3 mois</option>
+                    <option value="under-consideration" data-key="date_option_4">Projet en cours de réflexion</option>
                 </select>
-
+                
                 <button type="button" id="prev-page-2-btn" data-key="prev_btn">Précédent</button>
                 <button type="button" id="next-page-2-btn" data-key="next_btn">Suivant</button>
             </div>
 
             <div id="page-3" class="page" style="display: none;">
                 <h2 data-key="page3_title">Conditions de Voyage</h2>
-                <div id="conditional-question" style="display: none;">
+                
+                <div id="travel-options-group">
                     <label for="travel-option" data-key="travel_option_label">Souhaitez-vous que l'animal voyage:</label>
-                    <select id="travel-option" name="travel-option">
+                    <select id="travel-option" name="travel-option" required>
                         <option value="alone" data-key="travel_option_alone">Seul (Fret Aérien)</option>
                         <option value="with-you-cabin" data-key="travel_option_cabin">Avec vous - en cabine</option>
                         <option value="with-you-hold" data-key="travel_option_hold">Avec vous - en soute</option>
                     </select>
 
-                    <div id="context-field" style="display: none;">
+                    <div id="context-field" style="display: block;">
                         <label for="context" data-key="context_label">Contexte:</label>
-                        <select id="context" name="context">
+                        <select id="context" name="context" required>
                             <option value="breeding" data-key="context_breeding">Transport pour reproduction</option>
                             <option value="mobility" data-key="context_mobility">Mobilité internationale / expatriation</option>
                             <option value="joining-owner" data-key="context_joining">Rejoindre le propriétaire à destination</option>
@@ -474,29 +478,34 @@
 
             <div id="page-4" class="page" style="display: none;">
                 <h2 data-key="page4_title">Coordonnées</h2>
-                
+
                 <label for="first-name" data-key="first_name_label">Prénom:</label>
-                <input type="text" id="first-name" name="first-name" pattern="[A-Za-zÀ-ÿ\s]+" title="Seules les lettres sont autorisées" required>
+                <input type="text" id="first-name" name="first-name" required>
 
                 <label for="last-name" data-key="last_name_label">Nom:</label>
-                <input type="text" id="last-name" name="last-name" pattern="[A-Za-zÀ-ÿ\s]+" title="Seules les lettres sont autorisées" required>
+                <input type="text" id="last-name" name="last-name" required>
 
                 <label for="email" data-key="email_label">Adresse Email:</label>
                 <input type="email" id="email" name="email" required>
 
-                <label for="phone" data-key="phone_number_label">Numéro de téléphone:</label>
-                <input type="tel" id="phone" name="phone">
+                <label for="phone" data-key="phone_label">Numéro de Téléphone:</label>
+                <input type="tel" id="phone" name="phone" required>
 
-                <label for="whatsapp" data-key="whatsapp_number_label">WhatsApp (facultatif):</label>
+                <label for="whatsapp" data-key="whatsapp_label">Numéro WhatsApp (Optionnel):</label>
                 <input type="tel" id="whatsapp" name="whatsapp">
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="consent" name="consent" required>
+                    <label for="consent" data-key="consent_label">J'ai lu et j'accepte les Conditions Générales et les Politiques de Confidentialité.</label>
+                </div>
 
                 <button type="button" id="prev-page-4-btn" data-key="prev_btn">Précédent</button>
                 <button type="submit" data-key="submit_btn">Soumettre</button>
             </div>
         </form>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     <script src="script2.js"></script>
 </body>
 </html>

@@ -59,49 +59,31 @@ input[type="text"], input[type="email"], input[type="tel"], select, textarea {
     font-family: inherit;
 }
 
-/* Styling for Choices.js dropdowns */
-.choices {
-    width: 100%;
-    margin-bottom: 10px; /* To maintain spacing like other inputs */
+/* NEW: Checkbox Group Styling for Page 4 */
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-top: 10px; 
 }
 
-.choices__inner {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-sizing: border-box;
-}
-
-.choices__list--single {
-    padding: 0;
-}
-
-.choices__item.choices__item--selectable {
-    padding-right: 10px; /* Adjust as needed */
-}
-
-.choices[data-type*='select-one']:after {
-    /* Style for the dropdown arrow */
-    border-color: #a0a0a0 transparent transparent transparent;
-    top: 18px; /* Adjust vertical position */
-    right: 15px; /* Adjust horizontal position */
-}
-
-/* Ensure the input inside choices also gets proper styling */
-.choices__input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 0; /* Handled by .choices */
-    border: none; /* Already handled by .choices__inner */
-    background-color: transparent;
-    font-family: inherit;
-    box-sizing: border-box;
+.checkbox-group input[type="checkbox"] {
+    /* Resetting size/margin for checkboxes */
+    width: auto;
+    margin-right: 10px;
+    margin-top: 5px; 
+    flex-shrink: 0;
 }
 
 input.error, select.error, textarea.error {
     border-color: var(--danger-color);
     background-color: #fff0f0;
+}
+
+/* New: Style for error on checkbox label */
+.checkbox-group label.error {
+    color: var(--danger-color);
+    font-weight: 500;
 }
 
 /* Buttons */
@@ -172,11 +154,18 @@ button[id^="prev"] {
     clear: both;
 }
 
-/* Styling for gmp-place-autocomplete internal input */
-gmp-place-autocomplete input {
+/* --- Styles for Intl Tel Input --- */
+/* Ensure the international phone input container matches other inputs */
+.iti {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* Ensure the input inside the lib container has standard styling */
+.iti__tel-input {
     width: 100%;
     padding: 12px;
-    margin-bottom: 10px;
+    padding-left: 50px !important; /* Make room for flag */
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #f9f9f9;
