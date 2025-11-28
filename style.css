@@ -48,7 +48,7 @@ h3 {
 #page-1 { display: block; } /* Ensure Page 1 is visible by default */
 
 /* Input Styles */
-input[type="text"], select, textarea {
+input[type="text"], input[type="email"], input[type="tel"], select, textarea {
     width: 100%;
     padding: 12px;
     margin-bottom: 10px;
@@ -57,6 +57,46 @@ input[type="text"], select, textarea {
     background-color: #f9f9f9;
     box-sizing: border-box;
     font-family: inherit;
+}
+
+/* Styling for Choices.js dropdowns */
+.choices {
+    width: 100%;
+    margin-bottom: 10px; /* To maintain spacing like other inputs */
+}
+
+.choices__inner {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+}
+
+.choices__list--single {
+    padding: 0;
+}
+
+.choices__item.choices__item--selectable {
+    padding-right: 10px; /* Adjust as needed */
+}
+
+.choices[data-type*='select-one']:after {
+    /* Style for the dropdown arrow */
+    border-color: #a0a0a0 transparent transparent transparent;
+    top: 18px; /* Adjust vertical position */
+    right: 15px; /* Adjust horizontal position */
+}
+
+/* Ensure the input inside choices also gets proper styling */
+.choices__input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 0; /* Handled by .choices */
+    border: none; /* Already handled by .choices__inner */
+    background-color: transparent;
+    font-family: inherit;
+    box-sizing: border-box;
 }
 
 input.error, select.error, textarea.error {
@@ -130,4 +170,16 @@ button[id^="prev"] {
     content: "";
     display: table;
     clear: both;
+}
+
+/* Styling for gmp-place-autocomplete internal input */
+gmp-place-autocomplete input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    font-family: inherit;
 }

@@ -25,7 +25,7 @@
             </div>
 
             <div id="page-2" class="page" style="display: none;">
-                <h2 data-key="page2_title">Tell us what your project is.</h2>
+                <h2 data-key="page2_title">Départ et Destination</h2>
                 
                 <h3 data-key="departure_title">Départ</h3>
                 <label for="departure-address" data-key="departure_address_label">Adresse:</label>
@@ -468,6 +468,28 @@
                 <textarea id="additional-info" name="additional-info" rows="4" required></textarea>
 
                 <button type="button" id="prev-page-3-btn" data-key="prev_btn">Précédent</button>
+                <button type="button" id="next-page-3-btn" data-key="next_btn">Suivant</button>
+            </div>
+
+            <div id="page-4" class="page" style="display: none;">
+                <h2 data-key="page4_title">Coordonnées</h2>
+                
+                <label for="first-name" data-key="first_name_label">Prénom:</label>
+                <input type="text" id="first-name" name="first-name" pattern="[A-Za-zÀ-ÿ\s]+" title="Seules les lettres sont autorisées" required>
+
+                <label for="last-name" data-key="last_name_label">Nom:</label>
+                <input type="text" id="last-name" name="last-name" pattern="[A-Za-zÀ-ÿ\s]+" title="Seules les lettres sont autorisées" required>
+
+                <label for="email" data-key="email_label">Adresse Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="phone-number" data-key="phone_number_label">Numéro de téléphone:</label>
+                <input type="tel" id="phone-number" name="phone-number" required>
+
+                <label for="whatsapp-number" data-key="whatsapp_number_label">WhatsApp (facultatif):</label>
+                <input type="tel" id="whatsapp-number" name="whatsapp-number">
+
+                <button type="button" id="prev-page-4-btn" data-key="prev_btn">Précédent</button>
                 <button type="submit" data-key="submit_btn">Soumettre</button>
             </div>
         </form>

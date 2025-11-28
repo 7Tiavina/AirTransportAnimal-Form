@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const choiceOptions = {
         searchEnabled: true,
         itemSelectText: '',
+        allowHTML: true, // Suppress Choices.js deprecation warning
     };
 
     window.departureChoice = new Choices(departureCountrySelect, choiceOptions);
@@ -96,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             page1_title: "Informations sur l'Animal",
             page2_title: "Dites-nous quel est votre projet.",
             page3_title: "Conditions de Voyage",
+            page4_title: "Coordonnées",
             departure_title: "Départ",
             destination_title: "Destination",
             departure_address_label: "Adresse:",
@@ -119,6 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
             context_others: "Autres",
             other_means_label: "Veuillez mentionner d'autres moyens:",
             additional_info_label: "Informations Supplémentaires:",
+            first_name_label: "Prénom:",
+            last_name_label: "Nom:",
+            email_label: "Adresse Email:",
+            phone_number_label: "Numéro de téléphone:",
+            whatsapp_number_label: "WhatsApp (facultatif):",
             add_pet_btn: "Ajouter un Animal",
             next_btn: "Suivant",
             prev_btn: "Précédent",
@@ -143,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             page1_title: "Pet Information",
             page2_title: "Tell us what your project is.",
             page3_title: "Travel Conditions",
+            page4_title: "Contact Information",
             departure_title: "Departure",
             destination_title: "Destination",
             departure_address_label: "Address:",
@@ -166,6 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
             context_others: "Others",
             other_means_label: "Please mention other means:",
             additional_info_label: "Additional Information:",
+            first_name_label: "First Name:",
+            last_name_label: "Last Name:",
+            email_label: "Email Address:",
+            phone_number_label: "Phone Number:",
+            whatsapp_number_label: "WhatsApp (optional):",
             add_pet_btn: "Add Pet",
             next_btn: "Next",
             prev_btn: "Previous",
@@ -261,12 +274,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const page1 = document.getElementById('page-1');
     const page2 = document.getElementById('page-2');
     const page3 = document.getElementById('page-3');
+    const page4 = document.getElementById('page-4');
 
     const addPetBtn = document.getElementById('add-pet-btn');
     const nextPage1Btn = document.getElementById('next-page-1-btn');
     const prevPage2Btn = document.getElementById('prev-page-2-btn');
     const nextPage2Btn = document.getElementById('next-page-2-btn');
     const prevPage3Btn = document.getElementById('prev-page-3-btn');
+    const nextPage3Btn = document.getElementById('next-page-3-btn'); // New: next button for page 3
+    const prevPage4Btn = document.getElementById('prev-page-4-btn'); // New: previous button for page 4
     const langToggleBtn = document.getElementById('lang-toggle-btn');
 
     const petFormsContainer = document.getElementById('pet-forms-container');
@@ -562,6 +578,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (nextPage3Btn) {
+        nextPage3Btn.addEventListener('click', () => {
+            if (validatePage(page3)) {
+                page3.style.display = 'none';
+                page4.style.display = 'block';
+            } else {
+                alert(translations[currentLang].error_alert);
+            }
+        });
+    }
+
+    if (prevPage4Btn) {
+        prevPage4Btn.addEventListener('click', () => {
+            page4.style.display = 'none';
+            page3.style.display = 'block';
+            checkQualification(); // Re-run qualification logic when returning to Page 3
+        });
+    }
+
     // --- Conditional Logic (Page 3) ---
     function checkQualification() {
         // Correctly retrieves the value from the destination country field
@@ -644,7 +679,8 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        if (!validatePage(page3)) {
+        // Validate page 4 fields before submission
+        if (!validatePage(page4)) {
             alert(translations[currentLang].error_alert);
             return;
         }
@@ -680,6 +716,13 @@ document.addEventListener('DOMContentLoaded', () => {
         data['context'] = formData.get('context') || '';
         data['other-means'] = formData.get('other-means') || '';
         data['additional-info'] = formData.get('additional-info');
+        
+        // Page 4 Fields
+        data['first-name'] = formData.get('first-name');
+        data['last-name'] = formData.get('last-name');
+        data['email'] = formData.get('email');
+        data['phone-number'] = formData.get('phone-number');
+        data['whatsapp-number'] = formData.get('whatsapp-number');
 
         console.log('Sending:', data);
 
