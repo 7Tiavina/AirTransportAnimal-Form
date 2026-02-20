@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merci - ATA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #9EA465;
+            --primary-dark: #8a8f5a;
+            --text-color: #2d3436;
+            --text-light: #636e72;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #9EA465 0%, #8a8f5a 100%);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 700px;
+        }
+        .logo {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .logo img {
+            max-width: 280px;
+            height: auto;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+        .form-container {
+            background: #ffffff;
+            padding: 50px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            text-align: center;
+        }
+        h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        .success-icon {
+            font-size: 5rem;
+            color: #28a745;
+            margin-bottom: 1rem;
+            animation: checkmark 0.5s ease;
+        }
+        @keyframes checkmark {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+        .contact-info {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+        .contact-info strong {
+            color: var(--primary-color);
+        }
+        .contact-info a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+        .logos-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+        }
+        .logos-container a {
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .logos-container a:hover {
+            transform: translateY(-5px);
+        }
+        .logos-container img {
+            max-width: 180px;
+            height: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        .btn-home {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        @media (max-width: 600px) {
+            .form-container { padding: 40px 25px; }
+            h2 { font-size: 1.5rem; }
+            .logos-container { grid-template-columns: 1fr; gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="logo">
+            <a href="index.html">
+                <img src="ATA-logo.png" alt="Logo Air Transport Animal">
+            </a>
+        </div>
+        
+        <div class="form-container">
+            <div class="success-icon">✓</div>
+            <h2>Merci !</h2>
+            <p>
+                Votre demande de transport d'animal a été soumise avec succès.<br>
+                Un membre de notre équipe vous contactera sous <strong>48 heures</strong> pour discuter des prochaines étapes.
+            </p>
+            
+            <div class="contact-info">
+                <p style="margin: 0; font-size: 0.95rem;">
+                    <strong>Besoin d'une assistance immédiate ?</strong><br>
+                    Écrivez-nous à <a href="mailto:contact@airtransportanimal.online">contact@airtransportanimal.online</a>
+                </p>
+            </div>
+            
+            <a href="index.html" class="btn-home">← Retour à l'accueil</a>
+        </div>
+        
+        <div class="logos-container">
+            <div class="logo-mymove">
+                <a href="https://mymove.bagagesdumonde.com/" target="_blank" rel="noopener">
+                    <img src="my-move.png" alt="Logo My Move">
+                </a>
+            </div>
+            <div class="logo-HP">
+                <a href="https://www.hellopassenger.com/" target="_blank" rel="noopener">
+                    <img src="hello-passenger.png" alt="Logo Hello Passenger">
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

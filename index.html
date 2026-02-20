@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATA - Animal Transport Application</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+    <link rel="alternate" hreflang="en" href="https://airtransportanimal.online/en/" />
+    <link rel="alternate" hreflang="fr" href="https://airtransportanimal.online/fr/" />
+    <link rel="alternate" hreflang="x-default" href="https://airtransportanimal.online/" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        :root {
+            --primary-color: #9EA465;
+            --primary-dark: #8a8f5a;
+            --primary-hover: #357abd;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --text-color: #2d3436;
+            --text-light: #636e72;
+            --bg-light: #f8f9fa;
+            --border-color: #dfe6e9;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #9EA465 0%, #8a8f5a 100%) !important;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 750px;
+        }
+        .logo {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .logo img {
+            max-width: 280px;
+            height: auto;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+        .form-container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            transition: box-shadow 0.3s ease;
+        }
+        .form-container:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        h2 {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        h3 {
+            color: var(--primary-color);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--bg-light);
+        }
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        #page-1 { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .title-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: var(--text-color);
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background-color: var(--bg-light);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(158,164,101,0.1);
+        }
+        input.error, select.error, textarea.error {
+            border-color: var(--danger-color);
+            background-color: #fff5f5;
+        }
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .error-message.show { display: block; }
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-sm);
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            margin-top: 2px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .checkbox-group label {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            cursor: pointer;
+        }
+        button {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-next, .btn-submit {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+        .btn-prev {
+            background-color: var(--bg-light);
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+        }
+        .pet-form {
+            border: 2px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+        .pet-form:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(158,164,101,0.1);
+        }
+        .pet-form h4 {
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        /* FIXED: Button Layout - Add Animal left, Next right, same line */
+        .page-1-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .page-1-left {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        .btn-add-pet {
+            background-color: #2d3436;
+            color: white;
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-add-pet:hover {
+            background-color: #000;
+        }
+        .btn-add-pet:disabled {
+            background-color: #b2bec3;
+        }
+        .btn-remove-pet {
+            background-color: #fff;
+            color: var(--danger-color);
+            border: 2px solid var(--danger-color);
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border-radius: 50px;
+        }
+        .btn-remove-pet:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        .pet-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .page-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--bg-light);
+        }
+        .radio-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: #fff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .radio-group:hover {
+            border-color: var(--primary-color);
+            background: #fafbf7;
+        }
+        .radio-group input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            margin-top: 2px;
+            flex-shrink: 0;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+        .radio-group label {
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .radio-group input[type="radio"]:checked + label {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .language-switcher {
+            margin-top: 1.5rem;
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--bg-light);
+        }
+        .lang-btn {
+            background-color: #2d3436;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .lang-btn:hover {
+            background-color: #000;
+            transform: translateY(-2px);
+        }
+        .limit-message {
+            display: none;
+            margin: 1.5rem 0;
+            padding: 1.25rem;
+            background-color: #fff3cd;
+            border: 2px solid var(--warning-color);
+            border-radius: var(--radius-sm);
+            text-align: center;
+        }
+        .limit-message strong {
+            color: #856404;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .limit-message p {
+            margin: 0;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+        .limit-message a {
+            color: #856404;
+            font-weight: 600;
+        }
+        .form-hint {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+        .iti { width: 100%; }
+        .iti__flag { background-image: url("https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/img/flags.png"); }
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .iti__flag { background-image: url("https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/img/flags@2x.png"); }
+        }
+        /* Google Places Autocomplete Styling */
+        .pac-container {
+            border-radius: 8px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+            border: 1px solid #dfe6e9 !important;
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 0.95rem !important;
+            z-index: 9999 !important;
+        }
+        .pac-container .pac-item {
+            padding: 10px 15px !important;
+            cursor: pointer !important;
+        }
+        .pac-container .pac-item:hover {
+            background-color: #f8f9fa !important;
+        }
+        .pac-container .pac-item-selected {
+            background-color: #f0f1f2 !important;
+        }
+        .pac-container .pac-icon {
+            margin-top: 5px !important;
+        }
+        /* Responsive */
+        @media (max-width: 600px) {
+            .form-container { padding: 25px 20px; }
+            h2 { font-size: 1.4rem; }
+            .page-1-actions { flex-direction: column; }
+            .page-1-left { width: 100%; justify-content: center; }
+            .btn-add-pet { width: 100%; justify-content: center; }
+            .page-navigation { flex-direction: column-reverse; }
+            .page-navigation button { width: 100%; }
+        }
+        /* Language toggle classes */
+        .lang-fr { display: none; }
+        body.lang-fr .lang-en { display: none !important; }
+        body.lang-fr .lang-fr { display: inline-block !important; }
+        body.lang-fr select option.lang-fr { display: block; }
+        body.lang-fr select option.lang-en { display: none; }
+        body:not(.lang-fr) select option.lang-fr { display: none; }
+        body:not(.lang-fr) select option.lang-en { display: block; }
+        /* Hidden elements for language */
+        .hidden-fr, .hidden-en { display: none; }
+        body.lang-fr .hidden-fr { display: none; }
+        body.lang-fr .hidden-en { display: inline-block; }
+        body:not(.lang-fr) .hidden-en { display: none; }
+        body:not(.lang-fr) .hidden-fr { display: inline-block; }
+    </style>
+</head>
+<body class="lang-en">
+    <div class="main-container">
+        <div class="logo">
+            <a href="index.html">
+                <img src="ATA-logo.png" alt="Air Transport Animal Logo">
+            </a>
+        </div>
+        <div class="form-container">
+            <form id="pet-form" novalidate>
+                <!-- Hidden field for pet count (HubSpot) -->
+                <input type="hidden" id="pet-count" name="pet_count" value="1">
+                
+                <!-- PAGE 1: Pet Information -->
+                <div id="page-1" class="page">
+                    <h2 class="lang-en">Get your personalized price estimate</h2>
+                    <h2 class="lang-fr">Obtenez votre estimation tarifaire personnalisée</h2>
+                    <p class="lang-en" style="text-align: center; color: var(--text-light);">
+                        Tell us a little more about your project so that we can accurately analyze your request and provide you with a suitable estimate.<br>
+                        <strong>One of our experts will get back to you within 48 hours!</strong>
+                    </p>
+                    <p class="lang-fr" style="text-align: center; color: var(--text-light);">
+                        Dites-nous-en un peu plus sur votre projet pour que nous puissions analyser précisément votre demande et vous proposer une estimation adaptée.<br>
+                        <strong>Un de nos experts vous fera un retour sous 48h00 !</strong>
+                    </p>
+                    <p class="lang-en" style="text-align: center;"><strong>It's simple, free, and without obligation.</strong></p>
+                    <p class="lang-fr" style="text-align: center;"><strong>C'est simple, gratuit et sans engagement.</strong></p>
+                    
+                    <div id="pet-forms-container"></div>
+                    
+                    <div id="pet-limit-message" class="limit-message">
+                        <strong class="lang-en">⚠️ Maximum 9 Animals</strong>
+                        <strong class="lang-fr">⚠️ Maximum 9 Animaux</strong>
+                        <p class="lang-en">
+                            You have reached the maximum limit of 9 animals for online requests.<br>
+                            For requests with more than 9 animals, please contact us directly by email at<br>
+                            <a href="mailto:contact@airtransportanimal.online">contact@airtransportanimal.online</a>
+                        </p>
+                        <p class="lang-fr">
+                            Vous avez atteint la limite maximale de 9 animaux pour les demandes en ligne.<br>
+                            Pour les demandes avec plus de 9 animaux, veuillez nous contacter directement par email à<br>
+                            <a href="mailto:contact@airtransportanimal.online">contact@airtransportanimal.online</a>
+                        </p>
+                    </div>
+                    
+                    <!-- FIXED: Button Layout - Add Animal (left) + Next (right) on same line -->
+                    <div class="page-1-actions">
+                        <div class="page-1-left">
+                            <button type="button" class="btn-add-pet" id="add-pet-btn">
+                                <span class="lang-en">➕ Add Animal</span>
+                                <span class="lang-fr">➕ Ajouter un Animal</span>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-next" id="next-page-1-btn">
+                            <span class="lang-en">Next →</span>
+                            <span class="lang-fr">Suivant →</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PAGE 2: Transport Project -->
+                <div id="page-2" class="page" style="display: none;">
+                    <h2 class="lang-en">Your Transport Project</h2>
+                    <h2 class="lang-fr">Votre Projet de Transport</h2>
+                    <p class="lang-en" style="text-align: center; color: var(--text-light);">Tell us what your project is?</p>
+                    <p class="lang-fr" style="text-align: center; color: var(--text-light);">Dites-nous quel est votre projet ?</p>
+                    
+                    <h3 class="lang-en">Departure</h3>
+                    <h3 class="lang-fr">Départ</h3>
+                    
+                    <label class="title-label lang-en" for="departure-street">Street Address <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="departure-street">Adresse <span style="color: var(--danger-color);">*</span></label>
+                    <input type="text" id="departure-street" name="departure-street" placeholder="Start typing your address..." autocomplete="off" required>
+                    <span class="form-hint lang-en">Street number and name</span>
+                    <span class="form-hint lang-fr">Numéro et nom de rue</span>
+                    
+                    <label class="title-label lang-en" for="departure-city">City <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="departure-city">Ville <span style="color: var(--danger-color);">*</span></label>
+                    <input type="text" id="departure-city" name="departure-city" placeholder="Start typing your city..." autocomplete="off" required>
+                    
+                    <label class="title-label lang-en" for="departure-country">Country <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="departure-country">Pays <span style="color: var(--danger-color);">*</span></label>
+                    <select id="departure-country" name="departure-country" required></select>
+                    
+                    <h3 class="lang-en">Destination</h3>
+                    <h3 class="lang-fr">Destination</h3>
+                    
+                    <label class="title-label lang-en" for="destination-street">Street Address <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="destination-street">Adresse <span style="color: var(--danger-color);">*</span></label>
+                    <input type="text" id="destination-street" name="destination-street" placeholder="Start typing your address..." autocomplete="off" required>
+                    
+                    <label class="title-label lang-en" for="destination-city">City <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="destination-city">Ville <span style="color: var(--danger-color);">*</span></label>
+                    <input type="text" id="destination-city" name="destination-city" placeholder="Start typing your city..." autocomplete="off" required>
+                    
+                    <label class="title-label lang-en" for="destination-country">Country <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="destination-country">Pays <span style="color: var(--danger-color);">*</span></label>
+                    <select id="destination-country" name="destination-country" required></select>
+                    
+                    <label class="title-label lang-en" for="departure-date">When would you like your animals to travel? <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="departure-date">Quand souhaitez-vous faire voyager vos animaux ? <span style="color: var(--danger-color);">*</span></label>
+                    <select id="departure-date" name="departure-date" required>
+                        <option value="" class="lang-en">-- Select an option --</option>
+                        <option value="" class="lang-fr">-- Choisissez une option --</option>
+                        <option value="1-month" class="lang-en">Within 1 month</option>
+                        <option value="1-month" class="lang-fr">Dans 1 mois</option>
+                        <option value="1-3-months" class="lang-en">In 1 to 3 months</option>
+                        <option value="1-3-months" class="lang-fr">Dans 1 à 3 mois</option>
+                        <option value="3-plus-months" class="lang-en">Beyond 3 months</option>
+                        <option value="3-plus-months" class="lang-fr">Au-delà de 3 mois</option>
+                        <option value="under-consideration" class="lang-en">Project under consideration</option>
+                        <option value="under-consideration" class="lang-fr">Projet en cours de réflexion</option>
+                    </select>
+                    
+                    <div class="page-navigation">
+                        <button type="button" class="btn-prev" id="prev-page-2-btn">
+                            <span class="lang-en">← Previous</span>
+                            <span class="lang-fr">← Précédent</span>
+                        </button>
+                        <button type="button" class="btn-next" id="next-page-2-btn">
+                            <span class="lang-en">Next →</span>
+                            <span class="lang-fr">Suivant →</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PAGE 3: Travel Conditions -->
+                <div id="page-3" class="page" style="display: none;">
+                    <h2 class="lang-en">Travel Conditions</h2>
+                    <h2 class="lang-fr">Conditions de Voyage</h2>
+                    
+                    <div id="travel-options-group">
+                        <label class="title-label lang-en" for="travel-option">Do you want the pet to travel: <span style="color: var(--danger-color);">*</span></label>
+                        <label class="title-label lang-fr" for="travel-option">Souhaitez-vous que l'animal voyage : <span style="color: var(--danger-color);">*</span></label>
+                        <select id="travel-option" name="travel-option" required>
+                            <option value="" class="lang-en">-- Select an option --</option>
+                            <option value="" class="lang-fr">-- Choisissez une option --</option>
+                            <option value="alone" class="lang-en">Alone (Air Freight)</option>
+                            <option value="alone" class="lang-fr">Seul (Fret Aérien)</option>
+                            <option value="with-you-cabin" class="lang-en">With you - in cabin</option>
+                            <option value="with-you-cabin" class="lang-fr">Avec vous - en cabine</option>
+                            <option value="with-you-hold" class="lang-en">With you - in hold</option>
+                            <option value="with-you-hold" class="lang-fr">Avec vous - en soute</option>
+                        </select>
+                        
+                        <div id="context-field" style="display: none;">
+                            <label class="title-label lang-en" style="margin-top: 1.5rem;">Context:</label>
+                            <label class="title-label lang-fr" style="margin-top: 1.5rem;">Contexte:</label>
+                            
+                            <div class="radio-group">
+                                <input type="radio" id="context-breeding" name="context" value="breeding" required>
+                                <label class="title-label lang-en" for="context-breeding">
+                                    <strong>Transport for breeding</strong><br>
+                                    <span style="font-size: 0.85em; color: var(--text-light);">You are organizing the transport of one or more animals as part of a breeding activity (sale, reproduction, shows...)</span>
+                                </label>
+                                <label class="title-label lang-fr" for="context-breeding">
+                                    <strong>Transport pour élevage</strong><br>
+                                    <span style="font-size: 0.85em; color: var(--text-light);">Vous organisez le transport d'un ou plusieurs animaux dans le cadre d'une activité d'élevage (vente, reproduction, concours...)</span>
+                                </label>
+                            </div>
+                            
+                            <div class="radio-group">
+                                <input type="radio" id="context-mobility" name="context" value="mobility">
+                                <label class="title-label lang-en" for="context-mobility">
+                                    <strong>International Mobility / Expatriation</strong><br>
+                                    <span style="font-size: 0.85em; color: var(--text-light);">The transport is part of a professional or family move abroad (transfer, installation, return...)</span>
+                                </label>
+                                <label class="title-label lang-fr" for="context-mobility">
+                                    <strong>Mobilité Internationale / Expatriation</strong><br>
+                                    <span style="font-size: 0.85em; color: var(--text-light);">Le transport s'inscrit dans un déménagement professionnel ou familial vers l'étranger (mutation, installation, retour...)</span>
+                                </label>
+                            </div>
+                            
+                            <div class="radio-group">
+                                <input type="radio" id="context-joining-owner" name="context" value="joining-owner">
+                                <label class="title-label lang-en" for="context-joining-owner">
+                                    <strong>Joining the owner at destination</strong><br>
+                                    <span style="font-size: 0.85em; color: var(--text-light);">The owner is already settled there, and the animal is joining them</span>
+                                </label>
+                                <label class="title-label lang-fr" for="context-joining-owner">
+                                    <strong>Rejoindre le propriétaire à destination</strong><br>
+                                    <span style="font-size: 0.85em; color: var(--text-light);">Le propriétaire est déjà installé sur place, et l'animal le rejoint</span>
+                                </label>
+                            </div>
+                            
+                            <div class="radio-group">
+                                <input type="radio" id="context-others" name="context" value="others">
+                                <label class="title-label lang-en" for="context-others"><strong>Other</strong></label>
+                                <label class="title-label lang-fr" for="context-others"><strong>Autre</strong></label>
+                            </div>
+                            
+                            <div id="other-means-field" style="display: none;">
+                                <label class="title-label lang-en" for="other-context-text">Specify the context:</label>
+                                <label class="title-label lang-fr" for="other-context-text">Précisez le contexte:</label>
+                                <input type="text" id="other-context-text" name="other-context-text">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <label class="title-label lang-en" for="additional-info" style="margin-top: 1.5rem; display: block;">
+                        Help us respond in the best way possible.<br>
+                        <span style="font-size: 0.85em; color: var(--text-light);">Some additional details (constraints, special wishes...) that will allow us to offer you the most suitable solution.</span>
+                    </label>
+                    <label class="title-label lang-fr" for="additional-info" style="margin-top: 1.5rem; display: block;">
+                        Aidez-nous à vous répondre au mieux.<br>
+                        <span style="font-size: 0.85em; color: var(--text-light);">Quelques détails supplémentaires (contraintes, souhaits particuliers...) qui nous permettront de vous proposer la solution la plus adaptée.</span>
+                    </label>
+                    <textarea id="additional-info" name="additional-info" rows="4" class="lang-en" placeholder="Ex: 2 brachycephalic dogs, need assistance with veterinary documents" style="margin-top: 0.5rem;"></textarea>
+                    <textarea id="additional-info" name="additional-info" rows="4" class="lang-fr" placeholder="Ex: 2 chiens brachycéphales, besoin assistance documents vétérinaires" style="margin-top: 0.5rem;"></textarea>
+                    
+                    <div class="page-navigation">
+                        <button type="button" class="btn-prev" id="prev-page-3-btn">
+                            <span class="lang-en">← Previous</span>
+                            <span class="lang-fr">← Précédent</span>
+                        </button>
+                        <button type="button" class="btn-next" id="next-page-3-btn">
+                            <span class="lang-en">Next →</span>
+                            <span class="lang-fr">Suivant →</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PAGE 4: Contact Information -->
+                <div id="page-4" class="page" style="display: none;">
+                    <h2 class="lang-en">Contact Information</h2>
+                    <h2 class="lang-fr">Coordonnées</h2>
+                    
+                    <label class="title-label lang-en" for="first-name">First Name <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="first-name">Prénom <span style="color: var(--danger-color);">*</span></label>
+                    <input type="text" id="first-name" name="first-name" required>
+                    
+                    <label class="title-label lang-en" for="last-name">Last Name <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="last-name">Nom <span style="color: var(--danger-color);">*</span></label>
+                    <input type="text" id="last-name" name="last-name" required>
+                    
+                    <label class="title-label lang-en" for="email">Email Address <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="email">Adresse Email <span style="color: var(--danger-color);">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                    
+                    <label class="title-label lang-en" for="phone">Phone Number <span style="color: var(--danger-color);">*</span></label>
+                    <label class="title-label lang-fr" for="phone">Numéro de Téléphone <span style="color: var(--danger-color);">*</span></label>
+                    <input type="tel" id="phone" name="phone" required>
+                    
+                    <label class="title-label lang-en" for="whatsapp">WhatsApp Number (Optional)</label>
+                    <label class="title-label lang-fr" for="whatsapp">Numéro WhatsApp (Optionnel)</label>
+                    <input type="tel" id="whatsapp" name="whatsapp">
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="consent" name="consent" required>
+                        <label class="title-label lang-en" for="consent">I have read and accept the Terms and Conditions and Privacy Policies.</label>
+                        <label class="title-label lang-fr" for="consent">J'ai lu et j'accepte les Conditions Générales et les Politiques de Confidentialité.</label>
+                    </div>
+                    
+                    <div class="page-navigation">
+                        <button type="button" class="btn-prev" id="prev-page-4-btn">
+                            <span class="lang-en">← Previous</span>
+                            <span class="lang-fr">← Précédent</span>
+                        </button>
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <div class="language-switcher" style="margin: 0; padding: 0; border: none;">
+                                <a href="#en" id="lang-toggle-en" class="lang-btn lang-fr">English</a>
+                                <a href="#fr" id="lang-toggle-fr" class="lang-btn lang-en">Français</a>
+                            </div>
+                            <button type="submit" class="btn-submit">
+                                <span class="lang-en">Submit ✓</span>
+                                <span class="lang-fr">Soumettre ✓</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+    <script>
+        // Google Maps API Key - Production
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyBjKhgSQJCEzQUgqUQHqb-hEYawV4Eojp0';
+        
+        const originalWarn = console.warn;
+        console.warn = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('Google Maps JavaScript API has been loaded directly without loading=async') || 
+                message.includes('google.maps.places.Autocomplete is not available to new customers')) { return; }
+            originalWarn.apply(console, args);
+        };
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+    </script>
+    <script>
+// ============================================
+// LANGUAGE DETECTION & TOGGLE
+// ============================================
+(function() {
+    function detectLanguage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const hash = window.location.hash;
+        if (hash === '#fr') return 'fr';
+        if (hash === '#en') return 'en';
+        if (urlParams.get('lang') === 'fr') return 'fr';
+        if (urlParams.get('lang') === 'en') return 'en';
+        const savedLang = localStorage.getItem('preferredLanguage');
+        if (savedLang === 'fr' || savedLang === 'en') return savedLang;
+        const browserLang = navigator.language || navigator.userLanguage;
+        if (browserLang && browserLang.toLowerCase().startsWith('fr')) return 'fr';
+        return 'en';
+    }
+    function setLanguage(lang) {
+        document.body.classList.remove('lang-en', 'lang-fr');
+        document.body.classList.add('lang-' + lang);
+        localStorage.setItem('preferredLanguage', lang);
+        window.location.hash = lang;
+        updateFormLanguage(lang);
+    }
+    function updateFormLanguage(lang) {
+        const departureStreet = document.getElementById('departure-street');
+        const destinationStreet = document.getElementById('destination-street');
+        const departureCity = document.getElementById('departure-city');
+        const destinationCity = document.getElementById('destination-city');
+        if (lang === 'fr') {
+            departureStreet.placeholder = 'Numéro et nom de rue';
+            destinationStreet.placeholder = 'Numéro et nom de rue';
+            departureCity.placeholder = 'Ville';
+            destinationCity.placeholder = 'Ville';
+        } else {
+            departureStreet.placeholder = 'Street address';
+            destinationStreet.placeholder = 'Street address';
+            departureCity.placeholder = 'City';
+            destinationCity.placeholder = 'City';
+        }
+    }
+    const detectedLang = detectLanguage();
+    setLanguage(detectedLang);
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleFr = document.getElementById('lang-toggle-fr');
+        const toggleEn = document.getElementById('lang-toggle-en');
+        if (toggleFr) toggleFr.addEventListener('click', function(e) { e.preventDefault(); setLanguage('fr'); });
+        if (toggleEn) toggleEn.addEventListener('click', function(e) { e.preventDefault(); setLanguage('en'); });
+    });
+})();
+
+// ============================================
+// MAIN FORM SCRIPT
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+    const currentLang = document.body.classList.contains('lang-fr') ? 'fr' : 'en';
+    const choiceOptions = { searchEnabled: true, itemSelectText: '', shouldSort: false, allowHTML: false };
+
+    // ============================================
+    // BREED LISTS - FIXED & COMPLETE
+    // ============================================
+    
+    // ENGLISH Breed Lists
+    const qualifiedDogsEN = [
+        "Affenpinscher", "Akita Inu", "American Akita", "American Bulldog", "American Bully", 
+        "American Staffordshire Terrier", "Anatolian Shepherd", "Beauceron", "Bernese Mountain Dog", 
+        "Boerboel", "Boston Terrier", "Bouvier des Ardennes", "Bouvier des Flandres", "Boxer", 
+        "Broholmer", "Brussels Griffon", "Bull Terrier", "Bullmastiff", "Ca de Bou (Majorcan Mastiff)", 
+        "Cane Corso", "Caucasian Shepherd Dog", "Cavalier King Charles Spaniel", "Chow Chow", 
+        "Doberman", "Dogo Argentino", "Dogue Canario (Presa Canario)", "French Mastiff", 
+        "English Bulldog", "Fila Brasileiro", "French Bulldog", "Great Dane", 
+        "Greater Swiss Mountain Dog", "Komondor", "Leonberger", "Mastiff", "Neapolitan Mastiff", 
+        "Old English Sheepdog (Bobtail)", "Pekingese", "Pug", "Pyrenean Mastiff", 
+        "Pyrenean Mountain Dog", "Rottweiler", "Saint Bernard", "Shar Pei", "Staffordshire Bull Terrier", 
+        "Tibetan Mastiff", "Tosa", "Spanish Mastiff", "Others"
+    ];
+    
+    const qualifiedCatsEN = [
+        "Bengal", "British Longhair", "British Shorthair", "Burmese", "Exotic Fold", 
+        "Exotic Shorthair", "Himalayan", "Persian", "Savannah", "Scottish Fold", 
+        "Selkirk Rex", "Others"
+    ];
+    
+    const dogBreedsEN = [
+        "Affenpinscher", "Airedale Terrier", "Akita Inu", "Alaskan Klee Kai", "Alaskan Malamute", 
+        "American Akita", "American Bulldog", "American Bully", "American Foxhound", 
+        "American Pit Bull Terrier", "American Staffordshire Terrier", "Anatolian Shepherd", 
+        "Appenzeller Sennenhund", "Atlas Shepherd (Aidi)", "Australian Cattle Dog", "Australian Shepherd", 
+        "Australian Terrier", "Basenji", "Basset Hound", "Beauceron", "Beagle", "Bearded Collie", 
+        "Belgian Malinois", "Belgian Shepherd", "Bernese Mountain Dog", "Bichon Frise", "Bloodhound", 
+        "Blue Gascon", "Boerboel", "Border Collie", "Border Terrier", "Borzoi", "Boston Terrier", 
+        "Bouvier des Ardennes", "Bouvier des Flandres", "Boxer", "Briard", "Brittany Spaniel", 
+        "Broholmer", "Brussels Griffon", "Bull Terrier", "Bullmastiff", "Ca de Bou (Majorcan Mastiff)", 
+        "Cairn Terrier", "Cane Corso", "Catalan Sheepdog", "Caucasian Shepherd Dog", 
+        "Cavalier King Charles Spaniel", 
+        // CHIHUAHUA VARIANTS - FIXED STRUCTURE
+        "Chihuahua", "Apple Head Chihuahua", "Deer Head Chihuahua",
+        "Chow Chow", "Cocker Spaniel", "Collie", "Coton de Tulear", "Creole or Mangrove Shepherd", 
+        "Czechoslovakian Wolfdog", "Dachshund", "Dalmatian", "Doberman", "Dogo Argentino", 
+        "Dogue Canario (Presa Canario)", "Dutch Smoushond (Kooikerhondje)", "English Bulldog", 
+        "English Pointer", "Fila Brasileiro", "Finnish Spitz", "Fox Terrier", "French Bulldog", 
+        "French Foxhound", "French Mastiff", "German Shepherd", "German Shorthaired Pointer", 
+        "German Spitz", "German Wirehaired Pointer", "Golden Retriever", "Great Dane", 
+        "Greater Swiss Mountain Dog", "Greyhound", "Icelandic Sheepdog", "Italian Greyhound", 
+        "Italian Spitz", "Jack Russell Terrier", "Japanese Spaniel (Japanese Chin)", "Japanese Spitz", 
+        "Japanese Terrier", "King Charles Spaniel", "Komondor", "Kooikerhondje", "Labrador Retriever", 
+        "Leonberger", "Lhasa Apso", "Maltese", "Mastiff", "Medium Poodle", "Mudi", 
+        "Neapolitan Mastiff", "Newfoundland", "Norfolk Terrier", "Old English Sheepdog (Bobtail)", 
+        "Pekingese", "Picardy Shepherd", "Picardy Spaniel", "Pinscher", "Pointer", 
+        "Polish Lowland Sheepdog", "Pomeranian", "Poodle", "Portuguese Water Dog", "Pug", 
+        "Pyrenean Mastiff", "Pyrenean Mountain Dog", "Rhodesian Ridgeback", "Rottweiler", 
+        "Saint Bernard", "Samoyed", "Schipperke", "Schnauzer (Giant)", "Schnauzer (Miniature)", 
+        "Schnauzer (Standard)", "Scottish Terrier", "Shar Pei", "Shetland Sheepdog", "Shiba Inu", 
+        "Shih Tzu", "Siberian Husky", "Silky Terrier", "Skye Terrier", "Smooth Fox Terrier", 
+        "Soft Coated Wheaten Terrier", "Spaniel (various types)", "Spinone Italiano", 
+        "Staffordshire Bull Terrier", "Standard Poodle", "Sussex Spaniel", "Swedish Vallhund", 
+        "Tibetan Mastiff", "Tibetan Spaniel", "Tosa", "Toy Poodle", "Vizsla", "Weimaraner", 
+        "Welsh Corgi (Cardigan)", "Welsh Corgi (Pembroke)", "Welsh Terrier", "West Highland White Terrier", 
+        "Whippet", "Wire Fox Terrier", "Yorkshire Terrier", "Spanish Mastiff", "Others"
+    ];
+    
+    const catBreedsEN = [
+        "Abyssinian", "American Bobtail", "American Curl", "American Shorthair", "American Wirehair", 
+        "Asian", "Australian Mist", "Balinese", "Bengal", "Birman (Sacred Birman)", "Bohemian Rex", 
+        "Bombay", "British Longhair", "British Shorthair", "Burmese", "Burmilla", "Californian Rex", 
+        "Chartreux", "Cornish Rex", "Cymric", "Devon Rex", "Domestic Cat", "Donskoy (Don Sphynx)", 
+        "Egyptian Mau", "European", "Exotic Fold", "Exotic Shorthair", "German Rex", "Himalayan", 
+        "Highland Fold", "Korat", "Kurilian Bobtail", "LaPerm", "Lykoi", "Maine Coon", "Manx", 
+        "Mekong Bobtail", "Munchkin", "Nebelung", "Neva Masquerade", "Norwegian Forest Cat", 
+        "Ocicat", "Oriental", "Persian", "Peterbald", "Ragamuffin", "Ragdoll", "Russian Blue", 
+        "Savannah", "Scottish Fold", "Selkirk Rex", "Siamese", "Siberian", "Singapura", "Snowshoe", 
+        "Sokoke", "Somali", "Sphynx", "Thai", "Tiffanie", "Tonkinese", "Toyger", "Turkish Angora", 
+        "Turkish Van", "Others"
+    ];
+    
+    // FRENCH Breed Lists
+    const qualifiedDogsFR = [
+        "Affenpinscher", "Akita Inu", "American Akita", "American Bulldog", "American Bully", 
+        "American Staffordshire Terrier", "Berger d'Anatolie", "Beauceron", "Bouvier Bernois", 
+        "Boerboel", "Boston Terrier", "Bouvier des Ardennes", "Bouvier des Flandres", "Boxer", 
+        "Broholmer", "Griffon Bruxellois", "Bull Terrier", "Bullmastiff", "Dogue de Majorque", 
+        "Cane Corso", "Berger du Caucase", "Cavalier King Charles", "Chow Chow", "Doberman", 
+        "Dogue Argentin", "Dogue des Canaries", "Dogue de Bordeaux", "Bouledogue Anglais", 
+        "Fila Brasileiro", "Bouledogue Français", "Dogue Allemand", "Grand Bouvier Suisse", 
+        "Komondor", "Leonberger", "Mâtin", "Mâtin de Naples", "Bobtail", "Pékinois", "Carlin", 
+        "Mâtin des Pyrénées", "Chien de Montagne des Pyrénées", "Rottweiler", "Saint-Bernard", 
+        "Shar-Pei", "Staffordshire Bull Terrier", "Dogue du Tibet", "Tosa Inu", "Mâtin Espagnol", 
+        "Autres"
+    ];
+    
+    const qualifiedCatsFR = [
+        "Bengal", "British Longhair", "British Shorthair", "Burmese", "Exotic Fold", 
+        "Exotic Shorthair", "Himalayen", "Persan", "Savannah", "Scottish Fold", 
+        "Selkirk Rex", "Autres"
+    ];
+    
+    const dogBreedsFR = [
+        "Affenpinscher", "Airedale Terrier", "Akita Inu", "Klee Kai d'Alaska", "Malamute de l'Alaska", 
+        "Akita Américain", "American Bully", "Pit Bull Terrier Américain", "American Staffordshire Terrier", 
+        "Berger d'Anatolie", "Bouvier d'Appenzell", "Aïdi", "Bouvier Australien", "Berger Australien", 
+        "Terrier Australien", "Basenji", "Basset Hound", "Beagle", "Colley à poil long", "Beauceron", 
+        "Malinois", "Berger Belge", "Bouvier Bernois", "Bichon Frisé", "Chien de Saint-Hubert", 
+        "Bleu de Gascogne", "Boerboel", "Border Collie", "Border Terrier", "Barzoï", "Terrier de Boston", 
+        "Bouvier des Ardennes", "Bouvier des Flandres", "Boxer", "Briard", "Épagneul Breton", "Broholmer", 
+        "Griffon Bruxellois", "Bull Terrier", "Bullmastiff", "Dogue de Majorque", "Cairn Terrier", 
+        "Cane Corso", "Berger Catalan", "Berger du Caucase", "Cavalier King Charles", 
+        // CHIHUAHUA VARIANTS - FIXED STRUCTURE
+        "Chihuahua", "Chihuahua Apple Head", "Chihuahua Deer Head",
+        "Chow Chow", "Cocker Spaniel", "Colley", "Coton de Tuléar", "Berger Créole", 
+        "Chien-loup Tchécoslovaque", "Teckel", "Dalmatien", "Doberman", "Dogue Argentin", 
+        "Dogue des Canaries", "Smoushond Hollandais", "Bouledogue Anglais", "Pointer Anglais", 
+        "Fila Brasileiro", "Spitz Finlandais", "Fox-terrier", "Bouledogue Français", "Français Tricolore", 
+        "Dogue de Bordeaux", "Berger Allemand", "Braque Allemand à Poil Court", "Spitz Allemand", 
+        "Braque Allemand à Poil Dur", "Golden Retriever", "Dogue Allemand", "Grand Bouvier Suisse", 
+        "Lévrier", "Chien de Berger Islandais", "Lévrier Italien", "Volpino Italien", 
+        "Jack Russell Terrier", "Épagneul Japonais", "Spitz Japonais", "Terrier Japonais", 
+        "King Charles Spaniel", "Komondor", "Kooikerhondje", "Labrador Retriever", "Leonberger", 
+        "Lhassa Apso", "Bichon Maltais", "Mâtin", "Caniche Moyen", "Mudi", "Mâtin de Naples", 
+        "Terre-neuve", "Terrier de Norfolk", "Bobtail", "Pékinois", "Berger de Picardie", 
+        "Épagneul de Picardie", "Pinscher", "Pointer", "Berger Polonais de Plaine", 
+        "Loulou de Poméranie", "Caniche", "Chien d'Eau Portugais", "Carlin", "Mâtin des Pyrénées", 
+        "Chien de Montagne des Pyrénées", "Rhodesian Ridgeback", "Rottweiler", "Saint-Bernard", 
+        "Samoyède", "Schipperke", "Schnauzer (Géant)", "Schnauzer (Nain)", "Schnauzer (Standard)", 
+        "Terrier Écossais", "Shar-Pei", "Berger des Shetland", "Shiba Inu", "Shih Tzu", 
+        "Husky de Sibérie", "Terrier Soyeux", "Skye Terrier", "Smooth Fox Terrier", 
+        "Soft Coated Wheaten Terrier", "Épagneul (divers types)", "Spinone Italiano", 
+        "Staffordshire Bull Terrier", "Caniche Standard", "Sussex Spaniel", "Swedish Vallhund", 
+        "Dogue du Tibet", "Épagneul Tibétain", "Tosa Inu", "Caniche Toy", "Vizsla", "Braque de Weimar", 
+        "Welsh Corgi (Cardigan)", "Welsh Corgi (Pembroke)", "Terrier Gallois", "West Highland White Terrier", 
+        "Whippet", "Wire Fox Terrier", "Yorkshire Terrier", "Mâtin Espagnol", "Autres"
+    ];
+    
+    const catBreedsFR = [
+        "Abyssin", "Bobtail Américain", "American Curl", "American Shorthair", "American Wirehair", 
+        "Asian", "Australian Mist", "Balinais", "Bengal", "Sacré de Birmanie", "Rex de Bohême", 
+        "Bombay", "British Longhair", "British Shorthair", "Burmese", "Burmilla", "Rex Californien", 
+        "Chartreux", "Cornish Rex", "Cymric", "Devon Rex", "Chat de Gouttière", "Donskoy", 
+        "Mau Égyptien", "Européen", "Exotic Fold", "Exotic Shorthair", "Rex Allemand", "Himalayen", 
+        "Highland Fold", "Korat", "Bobtail des Kouriles", "LaPerm", "Lykoi", "Maine Coon", "Manx", 
+        "Bobtail du Mékong", "Munchkin", "Nebelung", "Neva Masquerade", "Chat des Forêts Norvégiennes", 
+        "Ocicat", "Oriental", "Persan", "Peterbald", "Ragamuffin", "Ragdoll", "Bleu Russe", 
+        "Savannah", "Scottish Fold", "Selkirk Rex", "Siamois", "Sibérien", "Singapura", "Snowshoe", 
+        "Sokoke", "Somali", "Sphynx", "Thaï", "Tiffanie", "Tonkinois", "Toyger", "Angora Turc", 
+        "Turc de Van", "Autres"
+    ];
+    
+    const nacBreeds = ["Chinchilla", "Cochon d'Inde", "Furet", "Gecko", "Lézard", "Rat Domestique", "Salamandre", "Serpent", "Tortue", "Autres"];
+    const nacBreedsEN = ["Chinchilla", "Guinea Pig", "Ferret", "Gecko", "Lizard", "Domestic Rat", "Salamander", "Snake", "Turtle", "Others"];
+    
+    const birdBreeds = ["Ara", "Cacatoès", "Caïque", "Canari", "Conure", "Éclectus", "Gris du Gabon", "Inséparable", "Lori", "Perroquet Amazonien", "Perruche à Collier", "Perruche Ondulée", "Autres"];
+    const birdBreedsEN = ["Ara", "Cockatoo", "Caique", "Canary", "Conure", "Eclectus", "African Grey", "Lovebird", "Lory", "Amazon Parrot", "Ring-necked Parakeet", "Budgerigar", "Others"];
+    
+    const rabbitBreeds = ["Lapin Angora Nain", "Fauve de Bourgogne", "Géant Blanc du Bouscat", "Lapin Hollandais", "Lapin Nain Bélier", "Lapin Nain de Couleur", "Lapin Tête de Lion", "Normand", "Papillon Anglais", "Géant des Flandres", "Autres"];
+    const rabbitBreedsEN = ["Angora Dwarf", "Burgundy Fawn", "White Giant from Bouscat", "Dutch Rabbit", "Holland Lop", "Netherland Dwarf", "Lionhead", "Norman", "English Butterfly", "Flemish Giant", "Others"];
+    
+    const breedsEN = {
+        'Cat': catBreedsEN, 
+        'Dog': dogBreedsEN, 
+        'NAC': nacBreedsEN, 
+        'Bird': birdBreedsEN,
+        'Rabbit': rabbitBreedsEN, 
+        'Others': []
+    };
+    
+    const breedsFR = {
+        'Cat': catBreedsFR, 
+        'Dog': dogBreedsFR, 
+        'NAC': nacBreeds, 
+        'Bird': birdBreeds,
+        'Rabbit': rabbitBreeds, 
+        'Others': []
+    };
+    
+    const qualifiedCountries = ["France", "Mauritius", "Australia", "New Caledonia", "New Zealand", "South Africa", "Ireland", "Wallis and Futuna", "Bahrain", "Hong Kong", "United Kingdom", "French Polynesia", "United Arab Emirates"];
+
+    // ============================================
+    // COUNTRY LISTS
+    // ============================================
+    const countriesEN = [
+        "Afghanistan","Åland Islands","Albania","Algeria","American Samoa","Andorra","Angola","Anguilla","Antigua and Barbuda","Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Cayman Islands","Central African Republic","Chad","Chile","China","Christmas Island","Cocos (Keeling) Islands","Colombia","Comoros","Congo","Cook Islands","Costa Rica","Croatia","Cuba","Czech Republic","Democratic Republic of the Congo","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Eswatini","Estonia","Ethiopia","Falkland Islands","Faroe Islands","Federated States of Micronesia","Fiji","Finland","France","French Guiana","French Polynesia","French Southern Territories","Gabon","Gambia","Georgia","Germany","Ghana","Gibraltar","Greece","Greenland","Grenada","Guadeloupe","Guam","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Isle of Man","Israel","Italy","Ivory Coast","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Macao","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Martinique","Mauritania","Mauritius","Mayotte","Mexico","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","Niue","Norfolk Island","North Korea","North Macedonia","Northern Mariana Islands","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Pitcairn Islands","Poland","Portugal","Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Helena","Saint Kitts and Nevis","Saint Lucia","Saint Pierre and Miquelon","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Somalia","South Africa","South Georgia and the South Sandwich Islands","South Korea","Spain","Sri Lanka","Sudan","Suriname","Svalbard and Jan Mayen","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Turks and Caicos Islands","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","United States Virgin Islands","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Wallis and Futuna","Yemen","Zambia","Zimbabwe"
+    ];
+    
+    const countriesFR = [
+        "Afghanistan","Afrique du Sud","Îles Åland","Albanie","Algérie","Allemagne","Samoa Américaines","Andorre","Angola","Anguilla","Antigua-et-Barbuda","Antilles Néerlandaises","Arabie Saoudite","Argentine","Arménie","Aruba","Australie","Autriche","Azerbaïdjan","Bahamas","Bahreïn","Bangladesh","Barbade","Belgique","Belize","Bénin","Bermudes","Bhoutan","Biélorussie","Birmanie (Myanmar)","Bolivie","Bosnie-Herzégovine","Botswana","Brésil","Brunei","Bulgarie","Burkina Faso","Burundi","Cambodge","Cameroun","Canada","Cap-vert","Chili","Chine","Colombie","Comores","Congo","Corée du Nord","Corée du Sud","Costa Rica","Côte d'Ivoire","Croatie","Cuba","Danemark","Djibouti","Dominique","Égypte","Émirats Arabes Unis","Équateur","Érythrée","Espagne","Estonie","États Fédérés de Micronésie","États-Unis","Éthiopie","Fidji","Finlande","France","Gabon","Gambie","Géorgie","Géorgie du Sud et les Îles Sandwich du Sud","Ghana","Gibraltar","Grèce","Grenade","Groenland","Guadeloupe","Guam","Guatemala","Guinée","Guinée Équatoriale","Guinée-Bissau","Guyana","Guyane Française","Haïti","Honduras","Hong-Kong","Hongrie","Île Christmas","Île de Man","Île Norfolk","Îles Caïmans","Îles Cocos (Keeling)","Îles Cook","Îles Féroé","Îles Malouines","Îles Mariannes du Nord","Îles Marshall","Îles Pitcairn","Îles Turks et Caïques","Îles Vierges Britanniques","Îles Vierges des États-Unis","Inde","Indonésie","Iran","Iraq","Irlande","Islande","Israël","Italie","Jamaïque","Japon","Jordanie","Kazakhstan","Kenya","Kirghizistan","Kiribati","Koweït","Laos","Le Vatican","Lesotho","Lettonie","Liban","Libéria","Libye","Liechtenstein","Lituanie","Luxembourg","Macao","Macédoine du Nord","Madagascar","Malaisie","Malawi","Maldives","Mali","Malte","Maroc","Martinique","Maurice","Mauritanie","Mayotte","Mexique","Moldavie","Monaco","Mongolie","Monténégro","Montserrat","Mozambique","Namibie","Nauru","Népal","Nicaragua","Niger","Nigéria","Niué","Norvège","Nouvelle-Calédonie","Nouvelle-Zélande","Oman","Ouganda","Ouzbékistan","Pakistan","Palaos","Palestine","Panama","Papouasie-Nouvelle-Guinée","Paraguay","Pays-Bas","Pérou","Philippines","Pologne","Polynésie Française","Porto Rico","Portugal","Qatar","République Centrafricaine","République Démocratique du Congo","République Dominicaine","République du Congo","République Tchèque","Réunion","Roumanie","Royaume-Uni","Russie","Rwanda","Sainte-Hélène","Sainte-Lucie","Saint-Kitts-et-Nevis","Saint-Marin","Saint-Pierre-et-Miquelon","Saint-Vincent-et-les-Grenadines","Salvador","Samoa","Samoa Américaines","Sao Tomé-et-Principe","Sénégal","Serbie","Seychelles","Sierra Leone","Singapour","Slovaquie","Slovénie","Somalie","Soudan","Sri Lanka","Suède","Suisse","Suriname","Svalbard et Jan Mayen","Swaziland","Syrie","Tadjikistan","Taïwan","Tanzanie","Tchad","Terres Australes Françaises","Thaïlande","Timor Oriental","Togo","Tonga","Trinité-et-Tobago","Tunisie","Turkménistan","Turquie","Tuvalu","Ukraine","Uruguay","Vanuatu","Venezuela","Viet Nam","Wallis et Futuna","Yémen","Zambie","Zimbabwe"
+    ];
+
+    const countryNameMapping = {
+        'Türkiye': 'Turkey', 'Turquie': 'Turkey', 'Turquía': 'Turkey', 'Турция': 'Turkey',
+        'Myanmar': 'Myanmar', 'Burma': 'Myanmar', 'Czechia': 'Czech Republic',
+        'The Netherlands': 'Netherlands', 'Nederland': 'Netherlands', 'Pays-Bas': 'Netherlands',
+        'United Kingdom': 'United Kingdom', 'UK': 'United Kingdom', 'Great Britain': 'United Kingdom', 'GB': 'United Kingdom',
+        'USA': 'United States', 'US': 'United States', 'États-Unis': 'United States',
+        'South Korea': 'South Korea', 'Korea': 'South Korea', 'North Korea': 'North Korea',
+        'Russia': 'Russia', 'Russian Federation': 'Russia', 'Россия': 'Russia',
+        'Iran': 'Iran', 'Syria': 'Syria', 'Libya': 'Libya', 'Vatican': 'Vatican City', 'Holy See': 'Vatican City'
+    };
+
+    // ============================================
+    // POPULATE COUNTRY SELECTS
+    // ============================================
+    function populateCountrySelects() {
+        const departureSelect = document.getElementById('departure-country');
+        const destinationSelect = document.getElementById('destination-country');
+        const isFR = currentLang === 'fr';
+        const countryList = isFR ? countriesFR : countriesEN;
+        const defaultOption = isFR ? '--Sélectionner un Pays--' : '--Select a Country--';
+        
+        const optionsHTML = `<option value="">${defaultOption}</option>` + 
+            countryList.map((c, i) => {
+                const enValue = countriesEN[countriesFR.indexOf(c)] || c;
+                return `<option value="${enValue}" class="lang-${isFR ? 'fr' : 'en'}">${c}</option>`;
+            }).join('');
+        
+        departureSelect.innerHTML = optionsHTML;
+        destinationSelect.innerHTML = optionsHTML;
+    }
+    populateCountrySelects();
+
+    // ============================================
+    // INITIALIZE CHOICES.JS
+    // ============================================
+    const departureCountrySelect = document.getElementById('departure-country');
+    const destinationCountrySelect = document.getElementById('destination-country');
+
+    window.countryOptionsCache = {
+        departure: Array.from(departureCountrySelect.options).filter(opt => opt.value).map(opt => ({ value: opt.value, label: opt.text })),
+        destination: Array.from(destinationCountrySelect.options).filter(opt => opt.value).map(opt => ({ value: opt.value, label: opt.text }))
+    };
+
+    window.departureChoice = new Choices(departureCountrySelect, choiceOptions);
+    window.destinationChoice = new Choices(destinationCountrySelect, choiceOptions);
+
+    // ============================================
+    // AUTO-SELECT COUNTRY FUNCTION
+    // ============================================
+    function autoSelectCountry(country, choicesInstance, countrySelect, countryMap = null, countryShort = null) {
+        let mappedCountry = countryNameMapping[country] || country;
+        let availableChoices = choicesInstance.store?.choices?.length > 0 ? choicesInstance.store.choices : 
+            (countrySelect.id === 'departure-country' ? window.countryOptionsCache.departure : window.countryOptionsCache.destination);
+        
+        let foundChoice = availableChoices.find(choice => choice.value === mappedCountry || choice.label === country);
+        if (!foundChoice && countryShort) {
+            foundChoice = availableChoices.find(choice => String(choice.value).toLowerCase() === countryShort.toLowerCase() || String(choice.label).toLowerCase() === countryShort.toLowerCase());
+        }
+        if (!foundChoice) {
+            const countryLower = mappedCountry.toLowerCase();
+            foundChoice = availableChoices.find(choice => String(choice.value).toLowerCase().includes(countryLower) || String(choice.label).toLowerCase().includes(countryLower));
+        }
+        
+        if (foundChoice && choicesInstance) {
+            if (typeof choicesInstance.setValue === 'function') {
+                try { choicesInstance.setValue([foundChoice.value]); return; } catch(e) {}
+            }
+            if (typeof choicesInstance.setChoiceByValue === 'function') {
+                try { choicesInstance.setChoiceByValue(foundChoice.value); return; } catch(e) {}
+            }
+        }
+    }
+    window.autoSelectCountry = autoSelectCountry;
+
+    // ============================================
+    // INITIALIZE PHONE INPUTS
+    // ============================================
+    const phoneInput = document.getElementById('phone');
+    const whatsappInput = document.getElementById('whatsapp');
+    const itiOptions = { 
+        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js", 
+        preferredCountries: ['fr', 'us', 'gb', 'ca', 'au'], 
+        separateDialCode: true 
+    };
+    const phoneIti = window.intlTelInput(phoneInput, itiOptions);
+    const whatsappIti = window.intlTelInput(whatsappInput, itiOptions);
+
+    // ============================================
+    // FORM ELEMENTS
+    // ============================================
+    const page1 = document.getElementById('page-1');
+    const page2 = document.getElementById('page-2');
+    const page3 = document.getElementById('page-3');
+    const page4 = document.getElementById('page-4');
+    const petFormsContainer = document.getElementById('pet-forms-container');
+    const form = document.getElementById('pet-form');
+    const travelOption = document.getElementById('travel-option');
+    const contextField = document.getElementById('context-field');
+    const contextRadioButtons = document.querySelectorAll('input[name="context"]');
+    const otherMeansField = document.getElementById('other-means-field');
+    const otherContextTextInput = document.getElementById('other-context-text');
+    let petIdCounter = 0;
+    const MAX_PETS = 9;
+
+    // ============================================
+    // CREATE PET FORM
+    // ============================================
+    function createPetForm() {
+        const currentPetCount = document.querySelectorAll('.pet-form').length;
+        if (currentPetCount >= MAX_PETS) {
+            const msg = currentLang === 'fr' 
+                ? `Vous avez atteint la limite maximale de ${MAX_PETS} animaux.` 
+                : `You have reached the maximum limit of ${MAX_PETS} animals.`;
+            alert(msg);
+            return;
+        }
+
+        petIdCounter++;
+        const petForm = document.createElement('div');
+        petForm.classList.add('pet-form');
+        petForm.dataset.id = petIdCounter;
+
+        const isFR = currentLang === 'fr';
+        const breeds = isFR ? breedsFR : breedsEN;
+        const animalTypeLabels = {
+            'Cat': isFR ? 'Chat' : 'Cat',
+            'Dog': isFR ? 'Chien' : 'Dog',
+            'Bird': isFR ? 'Oiseau' : 'Bird',
+            'Rabbit': isFR ? 'Lapin' : 'Rabbit',
+            'NAC': isFR ? 'NAC' : 'NAC',
+            'Others': isFR ? 'Autres' : 'Others'
+        };
+
+        const animalTypeOptions = Object.keys(breeds).map(type => 
+            `<option value="${type}">${animalTypeLabels[type] || type}</option>`
+        ).join('');
+
+        petForm.innerHTML = `
+            <h4>${isFR ? 'Animal' : 'Pet'} ${petIdCounter}</h4>
+            <label class="title-label">${isFR ? "Type d'animal" : 'Animal Type'} <span style="color: var(--danger-color);">*</span></label>
+            <select class="animal-type-select" required>
+                <option value="">${isFR ? '--Choisir--' : '--Select--'}</option>
+                ${animalTypeOptions}
+            </select>
+            <div class="breed-container" style="display: none;">
+                <label class="title-label">${isFR ? 'Race' : 'Breed'} <span style="color: var(--danger-color);">*</span></label>
+                <select class="breed-select"></select>
+            </div>
+            <label class="title-label">${isFR ? 'Âge (mois)' : 'Age (months)'} <span style="color: var(--danger-color);">*</span></label>
+            <input type="text" class="age-input" required placeholder="${isFR ? 'Ex: 12' : 'Ex: 12'}">
+            <label class="title-label">${isFR ? 'Poids (kg)' : 'Weight (kg)'} <span style="color: var(--danger-color);">*</span></label>
+            <input type="text" class="weight-input" required placeholder="${isFR ? 'Ex: 5.5' : 'Ex: 5.5'}">
+            <div class="pet-actions">
+                <button type="button" class="btn-remove-pet">${isFR ? '🗑️ Supprimer' : '🗑️ Remove'}</button>
+            </div>
+        `;
+
+        petFormsContainer.appendChild(petForm);
+
+        const animalTypeSelect = petForm.querySelector('.animal-type-select');
+        const breedContainer = petForm.querySelector('.breed-container');
+        const breedSelect = petForm.querySelector('.breed-select');
+        const ageInput = petForm.querySelector('.age-input');
+        const weightInput = petForm.querySelector('.weight-input');
+
+        animalTypeSelect.addEventListener('change', (e) => {
+            const selectedType = e.target.value;
+            if (selectedType && breeds[selectedType]) {
+                breedSelect.innerHTML = `<option value="">--Select--</option>` + 
+                    breeds[selectedType].map(b => `<option value="${b}">${b}</option>`).join('');
+                breedContainer.style.display = 'block';
+            } else {
+                breedContainer.style.display = 'none';
+            }
+        });
+
+        petForm.querySelector('.btn-remove-pet').addEventListener('click', () => {
+            if (document.querySelectorAll('.pet-form').length <= 1) {
+                alert(currentLang === 'fr' ? "Impossible de supprimer le dernier animal." : "Cannot remove the last pet.");
+                return;
+            }
+            petForm.remove();
+            updatePetLimitUI();
+        });
+
+        // Numeric validation
+        ageInput.addEventListener('input', () => { ageInput.value = ageInput.value.replace(/[^0-9]/g, ''); });
+        weightInput.addEventListener('input', () => {
+            weightInput.value = weightInput.value.replace(/[^0-9.]/g, '');
+            const parts = weightInput.value.split('.');
+            if (parts.length > 2) weightInput.value = parts[0] + '.' + parts.slice(1).join('');
+        });
+
+        updatePetLimitUI();
+    }
+
+    function updatePetLimitUI() {
+        const petForms = document.querySelectorAll('.pet-form');
+        const petCount = petForms.length;
+        const limitMessage = document.getElementById('pet-limit-message');
+        const addPetBtn = document.getElementById('add-pet-btn');
+        const petCountField = document.getElementById('pet-count');
+
+        // Update hidden field for HubSpot
+        if (petCountField) {
+            petCountField.value = petCount;
+        }
+
+        if (limitMessage) {
+            limitMessage.style.display = petCount >= MAX_PETS ? 'block' : 'none';
+        }
+        if (addPetBtn) {
+            addPetBtn.disabled = petCount >= MAX_PETS;
+        }
+        
+        console.log('🐾 Pet count updated:', petCount);
+    }
+
+    // Create first pet form
+    createPetForm();
+
+    // Add pet button
+    document.getElementById('add-pet-btn')?.addEventListener('click', createPetForm);
+
+    // ============================================
+    // PAGE NAVIGATION
+    // ============================================
+    document.getElementById('next-page-1-btn')?.addEventListener('click', () => {
+        if (validatePage(page1)) {
+            page1.style.display = 'none';
+            page2.style.display = 'block';
+        }
+    });
+
+    document.getElementById('prev-page-2-btn')?.addEventListener('click', () => {
+        page2.style.display = 'none';
+        page1.style.display = 'block';
+    });
+
+    document.getElementById('next-page-2-btn')?.addEventListener('click', () => {
+        const departureCountryValue = window.departureChoice?.getValue(true);
+        const destinationCountryValue = window.destinationChoice?.getValue(true);
+        if (!departureCountryValue) { alert(currentLang === 'fr' ? 'Veuillez sélectionner un pays de départ.' : 'Please select a Departure Country.'); return; }
+        if (!destinationCountryValue) { alert(currentLang === 'fr' ? 'Veuillez sélectionner un pays de destination.' : 'Please select a Destination Country.'); return; }
+        if (validatePage(page2)) {
+            page2.style.display = 'none';
+            page3.style.display = 'block';
+            checkQualification();
+        }
+    });
+
+    document.getElementById('prev-page-3-btn')?.addEventListener('click', () => {
+        page3.style.display = 'none';
+        page2.style.display = 'block';
+    });
+
+    document.getElementById('next-page-3-btn')?.addEventListener('click', () => {
+        if (validatePage(page3)) {
+            page3.style.display = 'none';
+            page4.style.display = 'block';
+        }
+    });
+
+    document.getElementById('prev-page-4-btn')?.addEventListener('click', () => {
+        page4.style.display = 'none';
+        page3.style.display = 'block';
+    });
+
+    // ============================================
+    // VALIDATION
+    // ============================================
+    function validatePage(pageElement) {
+        let isValid = true;
+
+        if (pageElement.id === 'page-1') {
+            const petForms = pageElement.querySelectorAll('.pet-form');
+            for (const petForm of petForms) {
+                const animalTypeSelect = petForm.querySelector('.animal-type-select');
+                const breedSelect = petForm.querySelector('.breed-select');
+                const ageInput = petForm.querySelector('.age-input');
+                const weightInput = petForm.querySelector('.weight-input');
+                const breedContainer = petForm.querySelector('.breed-container');
+
+                if (!animalTypeSelect.value) { animalTypeSelect.classList.add('error'); isValid = false; }
+                else animalTypeSelect.classList.remove('error');
+
+                if (breedContainer.style.display !== 'none' && !breedSelect.value) {
+                    breedSelect.classList.add('error'); isValid = false;
+                } else breedSelect.classList.remove('error');
+
+                if (!ageInput.value) { ageInput.classList.add('error'); isValid = false; }
+                else ageInput.classList.remove('error');
+
+                if (!weightInput.value) { weightInput.classList.add('error'); isValid = false; }
+                else weightInput.classList.remove('error');
+            }
+            if (!isValid) { alert(currentLang === 'fr' ? 'Veuillez remplir tous les champs obligatoires.' : 'Please fill in all required fields.'); return false; }
+        }
+
+        if (pageElement.id === 'page-4') {
+            const firstName = document.getElementById('first-name');
+            const lastName = document.getElementById('last-name');
+            const email = document.getElementById('email');
+            const phone = document.getElementById('phone');
+            const consent = document.getElementById('consent');
+
+            if (!firstName.value.trim()) { alert(currentLang === 'fr' ? 'Veuillez entrer votre prénom.' : 'Please enter your first name.'); return false; }
+            if (!lastName.value.trim()) { alert(currentLang === 'fr' ? 'Veuillez entrer votre nom.' : 'Please enter your last name.'); return false; }
+            if (!email.value.trim()) { alert(currentLang === 'fr' ? 'Veuillez entrer votre email.' : 'Please enter your email.'); return false; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) { alert(currentLang === 'fr' ? 'Email invalide.' : 'Invalid email.'); return false; }
+            if (!phoneIti.isValidNumber()) { alert(currentLang === 'fr' ? 'Numéro de téléphone invalide.' : 'Invalid phone number.'); return false; }
+            if (!consent.checked) { alert(currentLang === 'fr' ? 'Veuillez accepter les conditions.' : 'Please accept the terms.'); return false; }
+        }
+
+        if (pageElement.id === 'page-3' && travelOption.value === 'alone') {
+            const selectedContext = document.querySelector('input[name="context"]:checked');
+            if (!selectedContext) { alert(currentLang === 'fr' ? 'Veuillez sélectionner un contexte.' : 'Please select a context.'); return false; }
+            if (selectedContext.value === 'others' && !otherContextTextInput.value.trim()) {
+                alert(currentLang === 'fr' ? 'Veuillez préciser le contexte.' : 'Please specify the context.'); return false;
+            }
+        }
+
+        return isValid;
+    }
+
+    // ============================================
+    // CONTEXT VISIBILITY
+    // ============================================
+    travelOption?.addEventListener('change', () => {
+        if (travelOption.value === 'alone') {
+            contextField.style.display = 'block';
+            contextRadioButtons.forEach(r => r.required = true);
+        } else {
+            contextField.style.display = 'none';
+            contextRadioButtons.forEach(r => r.required = false);
+        }
+    });
+
+    contextRadioButtons.forEach(radio => {
+        radio.addEventListener('change', () => {
+            otherMeansField.style.display = radio.value === 'others' ? 'block' : 'none';
+            otherContextTextInput.required = radio.value === 'others';
+        });
+    });
+
+    // ============================================
+    // CHECK QUALIFICATION
+    // ============================================
+    function checkQualification() {
+        const destinationCountry = document.getElementById('destination-country').value;
+        const petForms = document.querySelectorAll('.pet-form');
+        let isAtLeastOnePetQualified = false;
+        
+        petForms.forEach(petForm => {
+            const animalType = petForm.querySelector('.animal-type-select').value;
+            const breed = petForm.querySelector('.breed-select').value;
+            const qualifiedDogs = currentLang === 'fr' ? qualifiedDogsFR : qualifiedDogsEN;
+            const qualifiedCats = currentLang === 'fr' ? qualifiedCatsFR : qualifiedCatsEN;
+            
+            if (animalType === 'Dog' && qualifiedDogs.includes(breed)) isAtLeastOnePetQualified = true;
+            else if (animalType === 'Cat' && qualifiedCats.includes(breed)) isAtLeastOnePetQualified = true;
+            else if (['Bird', 'Rabbit', 'NAC', 'Others'].includes(animalType)) isAtLeastOnePetQualified = true;
+        });
+        
+        const isCountryQualified = qualifiedCountries.includes(destinationCountry);
+        
+        if (isAtLeastOnePetQualified || isCountryQualified) {
+            document.getElementById('travel-options-group').style.display = 'none';
+            travelOption.required = false;
+        } else {
+            document.getElementById('travel-options-group').style.display = 'block';
+            travelOption.required = true;
+        }
+    }
+
+    // ============================================
+    // FORM SUBMISSION
+    // ============================================
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!validatePage(page4)) return;
+
+        const data = { pets: [] };
+        document.querySelectorAll('.pet-form').forEach(pForm => {
+            data.pets.push({
+                animal_type: pForm.querySelector('.animal-type-select').value,
+                breed: pForm.querySelector('.breed-select').value,
+                age: pForm.querySelector('.age-input').value,
+                weight: pForm.querySelector('.weight-input').value
+            });
+        });
+
+        data['departure-street'] = document.getElementById('departure-street').value;
+        data['departure-city'] = document.getElementById('departure-city').value;
+        data['departure-country'] = document.getElementById('departure-country').value;
+        data['destination-street'] = document.getElementById('destination-street').value;
+        data['destination-city'] = document.getElementById('destination-city').value;
+        data['destination-country'] = document.getElementById('destination-country').value;
+        data['departure-date'] = document.getElementById('departure-date').value;
+        data['travel-option'] = travelOption.value;
+        data['context'] = document.querySelector('input[name="context"]:checked')?.value || '';
+        data['other-context'] = document.getElementById('other-context-text').value;
+        data['additional-info'] = document.getElementById('additional-info').value;
+        data['first-name'] = document.getElementById('first-name').value;
+        data['last-name'] = document.getElementById('last-name').value;
+        data['email'] = document.getElementById('email').value;
+        data['phone'] = phoneIti.getNumber();
+        data['whatsapp'] = whatsappInput.value ? whatsappIti.getNumber() : '';
+        data['consent'] = document.getElementById('consent').checked ? 'true' : 'false';
+        data['pet_count'] = document.getElementById('pet-count').value; // Number of animals for HubSpot
+        
+        // Format pet data for HubSpot (individual fields per pet)
+        const petCount = parseInt(data['pet_count']);
+        const petTypes = [];
+        const petAges = [];
+        const petWeights = [];
+        const petBreeds = [];
+        
+        document.querySelectorAll('.pet-form').forEach((pForm, index) => {
+            const animalType = pForm.querySelector('.animal-type-select').value.toLowerCase();
+            const breed = pForm.querySelector('.breed-select').value;
+            const age = pForm.querySelector('.age-input').value;
+            const weight = pForm.querySelector('.weight-input').value;
+            
+            // Convert to HubSpot format (snake_case)
+            const breedValue = breed.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+            
+            petTypes.push(animalType);
+            petAges.push(age);
+            petWeights.push(weight);
+            petBreeds.push(breedValue);
+        });
+        
+        // Send as semicolon-separated values (HubSpot format)
+        data['pet_1_type'] = petTypes[0] || '';
+        data['pet_2_type'] = petTypes[1] || '';
+        data['pet_3_type'] = petTypes[2] || '';
+        data['pet_4_type'] = petTypes[3] || '';
+        data['pet_5_type'] = petTypes[4] || '';
+        data['pet_6_type'] = petTypes[5] || '';
+        data['pet_7_type'] = petTypes[6] || '';
+        data['pet_8_type'] = petTypes[7] || '';
+        data['pet_9_type'] = petTypes[8] || '';
+        
+        data['pet_1_age'] = petAges[0] || '';
+        data['pet_2_age'] = petAges[1] || '';
+        data['pet_3_age'] = petAges[2] || '';
+        data['pet_4_age'] = petAges[3] || '';
+        data['pet_5_age'] = petAges[4] || '';
+        data['pet_6_age'] = petAges[5] || '';
+        data['pet_7_age'] = petAges[6] || '';
+        data['pet_8_age'] = petAges[7] || '';
+        data['pet_9_age'] = petAges[8] || '';
+        
+        data['pet_1_weight'] = petWeights[0] || '';
+        data['pet_2_weight'] = petWeights[1] || '';
+        data['pet_3_weight'] = petWeights[2] || '';
+        data['pet_4_weight'] = petWeights[3] || '';
+        data['pet_5_weight'] = petWeights[4] || '';
+        data['pet_6_weight'] = petWeights[5] || '';
+        data['pet_7_weight'] = petWeights[6] || '';
+        data['pet_8_weight'] = petWeights[7] || '';
+        data['pet_9_weight'] = petWeights[8] || '';
+        
+        data['pet_1_breed'] = petBreeds[0] || '';
+        data['pet_2_breed'] = petBreeds[1] || '';
+        data['pet_3_breed'] = petBreeds[2] || '';
+        data['pet_4_breed'] = petBreeds[3] || '';
+        data['pet_5_breed'] = petBreeds[4] || '';
+        data['pet_6_breed'] = petBreeds[5] || '';
+        data['pet_7_breed'] = petBreeds[6] || '';
+        data['pet_8_breed'] = petBreeds[7] || '';
+        data['pet_9_breed'] = petBreeds[8] || '';
+
+        // Log data for debugging
+        console.log('📦 Form data prepared for submission:', data);
+        console.log('🐾 Pet count:', data['pet_count']);
+        console.log('🐕 Pet types:', petTypes);
+        console.log('🦴 Pet breeds:', petBreeds);
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = currentLang === 'fr' ? "Envoi en cours..." : "Sending...";
+
+        try {
+            const response = await fetch('https://forms.worldbaggagenetwork.com/wp-json/pet-transport/v1/request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            
+            if (response.ok) {
+                // Submit to HubSpot if configured
+                if (typeof window.submitToHubSpot === 'function' && typeof window.hubspotConfig !== 'undefined') {
+                    try {
+                        await window.submitToHubSpot(data, window.hubspotConfig);
+                        console.log('✅ HubSpot submission successful');
+                    } catch (hubspotError) {
+                        console.error('HubSpot error:', hubspotError);
+                    }
+                }
+                
+                alert(currentLang === 'fr' ? "Demande soumise avec succès!" : "Request submitted successfully!");
+                form.reset();
+                window.location.href = currentLang === 'fr' ? 'remerciement.html' : 'thank-you.html';
+            } else {
+                throw new Error('Submission failed');
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            alert(currentLang === 'fr' ? "La soumission a échoué. Veuillez réessayer." : "Submission failed. Please try again.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+        }
+    });
+
+    // ============================================
+    // GOOGLE PLACES AUTOCOMPLETE
+    // ============================================
+    let departureAutocomplete = null;
+    let destinationAutocomplete = null;
+    let departureCityAutocomplete = null;
+    let destinationCityAutocomplete = null;
+
+    // Initialize Google Places when API loads
+    function initializeGooglePlaces() {
+        if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
+            console.error('❌ Google Places API not loaded');
+            setTimeout(initializeGooglePlaces, 100);
+            return;
+        }
+        console.log('✅ Google Places API loaded');
+
+        const departureStreetInput = document.getElementById('departure-street');
+        const destinationStreetInput = document.getElementById('destination-street');
+        const departureCityInput = document.getElementById('departure-city');
+        const destinationCityInput = document.getElementById('destination-city');
+
+        // Get country code from selected country
+        function getCountryCode() {
+            const departureCountry = window.departureChoice?.getValue(true) || '';
+            const destinationCountry = window.destinationChoice?.getValue(true) || '';
+
+            const countryToCode = {
+                'France': 'fr', 'United States': 'us', 'United Kingdom': 'gb', 'Canada': 'ca',
+                'Australia': 'au', 'Germany': 'de', 'Spain': 'es', 'Italy': 'it', 'Netherlands': 'nl',
+                'Belgium': 'be', 'Switzerland': 'ch', 'Austria': 'at', 'Portugal': 'pt',
+                'Mauritius': 'mu', 'New Zealand': 'nz', 'Singapore': 'sg', 'Hong Kong': 'hk',
+                'United Arab Emirates': 'ae', 'South Africa': 'za'
+            };
+            const code = countryToCode[departureCountry] || countryToCode[destinationCountry];
+            return code || null; // Return null instead of undefined
+        }
+
+        // Initialize departure street autocomplete
+        if (departureStreetInput) {
+            const countryCode = getCountryCode();
+            const options = {
+                fields: ['address_components', 'formatted_address'],
+                types: ['address'],
+                componentRestrictions: countryCode ? { country: countryCode } : undefined
+            };
+            departureAutocomplete = new google.maps.places.Autocomplete(departureStreetInput, options);
+            
+            departureAutocomplete.addListener('place_changed', () => {
+                const place = departureAutocomplete.getPlace();
+                if (!place || !place.address_components) return;
+                
+                console.log('📍 Departure place selected:', place.formatted_address);
+                
+                // Extract components
+                let streetNumber = '', route = '', city = '', country = '';
+                
+                for (const component of place.address_components) {
+                    const types = component.types;
+                    if (types.includes('street_number')) streetNumber = component.long_name;
+                    if (types.includes('route')) route = component.long_name;
+                    if (types.includes('locality') || types.includes('postal_town')) city = component.long_name;
+                    if (types.includes('country')) country = component.long_name;
+                }
+                
+                // Set values
+                if (departureStreetInput) departureStreetInput.value = (streetNumber + ' ' + route).trim();
+                if (departureCityInput) departureCityInput.value = city;
+                if (country && window.departureChoice) {
+                    autoSelectCountry(country, window.departureChoice, document.getElementById('departure-country'));
+                }
+                
+                console.log('✅ Departure address filled:', departureStreetInput.value, city, country);
+            });
+        }
+
+        // Initialize destination street autocomplete
+        if (destinationStreetInput) {
+            const countryCode = getCountryCode();
+            const options = {
+                fields: ['address_components', 'formatted_address'],
+                types: ['address'],
+                componentRestrictions: countryCode ? { country: countryCode } : undefined
+            };
+            destinationAutocomplete = new google.maps.places.Autocomplete(destinationStreetInput, options);
+            
+            destinationAutocomplete.addListener('place_changed', () => {
+                const place = destinationAutocomplete.getPlace();
+                if (!place || !place.address_components) return;
+                
+                console.log('📍 Destination place selected:', place.formatted_address);
+                
+                // Extract components
+                let streetNumber = '', route = '', city = '', country = '';
+                
+                for (const component of place.address_components) {
+                    const types = component.types;
+                    if (types.includes('street_number')) streetNumber = component.long_name;
+                    if (types.includes('route')) route = component.long_name;
+                    if (types.includes('locality') || types.includes('postal_town')) city = component.long_name;
+                    if (types.includes('country')) country = component.long_name;
+                }
+                
+                // Set values
+                if (destinationStreetInput) destinationStreetInput.value = (streetNumber + ' ' + route).trim();
+                if (destinationCityInput) destinationCityInput.value = city;
+                if (country && window.destinationChoice) {
+                    autoSelectCountry(country, window.destinationChoice, document.getElementById('destination-country'));
+                }
+                
+                console.log('✅ Destination address filled:', destinationStreetInput.value, city, country);
+            });
+        }
+
+        // Initialize city autocompletes
+        if (departureCityInput) {
+            const options = {
+                fields: ['address_components', 'formatted_address'],
+                types: ['(cities)']
+            };
+            departureCityAutocomplete = new google.maps.places.Autocomplete(departureCityInput, options);
+            
+            departureCityAutocomplete.addListener('place_changed', () => {
+                const place = departureCityAutocomplete.getPlace();
+                if (!place || !place.address_components) return;
+                
+                for (const component of place.address_components) {
+                    if (component.types.includes('country')) {
+                        autoSelectCountry(component.long_name, window.departureChoice, document.getElementById('departure-country'));
+                    }
+                }
+            });
+        }
+
+        if (destinationCityInput) {
+            const options = {
+                fields: ['address_components', 'formatted_address'],
+                types: ['(cities)']
+            };
+            destinationCityAutocomplete = new google.maps.places.Autocomplete(destinationCityInput, options);
+            
+            destinationCityAutocomplete.addListener('place_changed', () => {
+                const place = destinationCityAutocomplete.getPlace();
+                if (!place || !place.address_components) return;
+                
+                for (const component of place.address_components) {
+                    if (component.types.includes('country')) {
+                        autoSelectCountry(component.long_name, window.destinationChoice, document.getElementById('destination-country'));
+                    }
+                }
+            });
+        }
+
+        // Initialize on page 2 visibility
+        const page2 = document.getElementById('page-2');
+        if (page2) {
+            const observer = new MutationObserver((mutations) => {
+                if (page2.style.display !== 'none') {
+                    setTimeout(() => {
+                        // Reinitialize with updated country restrictions
+                        const countryCode = getCountryCode();
+                        if (departureAutocomplete && countryCode) {
+                            departureAutocomplete.set('componentRestrictions', { country: countryCode });
+                        }
+                        if (destinationAutocomplete && countryCode) {
+                            destinationAutocomplete.set('componentRestrictions', { country: countryCode });
+                        }
+                    }, 200);
+                }
+            });
+            observer.observe(page2, { attributes: true, attributeFilter: ['style'] });
+        }
+    };
+    
+    // Start initialization
+    initializeGooglePlaces();
+});
+    </script>
+</body>
+</html>
